@@ -1,43 +1,10 @@
-1)	$delete ( c-addr n --- c-addr n ..... count )
-		( c-addr n --- 1 )
 
-If more than one record matches selection criteria return the key for
-each and the count.  If a unique match remove the record and return the 
-number of records deleted (1).
+Move file words into a seperate C source file.
 
-2)	delete key
+Build the smallest possible version with no file access just console.
 
-Need a mechanism for allowing quotes e.g. delete "ANDREW HOLT" or 
-some way of saying select records that match a logical condition and return
-record count e.g. return
+Compile with C++
 
-n n1 n2 n3 4 then have a command delete-all which removes each on turn
-
-OK, in tst.fth I have added a number of words to deal with LIFO list.
-
-So if I do a search each match is added to a Q.
-
-A second search adds to a second list.
-
-A conditional test places on the result list only thos records from the first
-and second that match the selection criteria (and, xor, or ).
-
-A forth list exists to hold released entries.  These can be used by subsequent
-searches.
-
-e.g. (psuedo code)
-
-find(list_head)
-
-find-first
-if found
-  add to list
-else
-  exit
-then
-
-while (find-next)
-  add to list
-end
+Port to mbed.
 
 
