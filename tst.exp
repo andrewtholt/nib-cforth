@@ -1,0 +1,90 @@
+#!/usr/local/bin/expectk 
+# strace 3
+proc start_up {} {
+	spawn ./cforth
+	set id $spawn_id
+	expect file
+	expect ok
+	exp_send "quiet\r"
+	exp_send "include db.fth\r"
+	exp_send "\r\rverbose\r"
+	expect ok
+	return $id
+}
+
+
+proc call_up { name id} {
+	strace 4
+	exp_send -i $id "call $name\r"
+	expect -i $id *
+	expect -i $id "records"
+	set list [split $expect_out(buffer) "\r"]
+	set list [lreplace $list 0 0]
+	set entries [llength $list]
+	incr entries -1
+	set list [lreplace $list $entries $entries ]
+	set entries [llength $list]
+	incr entries -1
+	set list [lreplace $list $entries $entries ]
+	set rec_cnt [llength $list]
+	set tmp [lindex $list $entries]
+	
+	set rec_cnt [lindex [split $tmp " "] 1]
+
+	for {set cnt 0 } {  $cnt <= $rec_cnt } { incr cnt 1 } {
+		set tmp [string trim [lindex $list $cnt] ]
+		set res [concat $res $tmp]
+	}
+	strace 0
+	return $list
+}
+
+proc display_result { name id } {
+#	.data.result delete 1.0 end
+	set list [call_up $name $id ]
+	set tmp [lindex $list 0]
+	send_user $tmp
+	for { set i 0 } { $i < [llength $list]} { incr i 1} {
+		set tmp [split [lindex $list $i]]
+		for { set j 1 } { $j < [llength $tmp]} { incr j 1} {
+			.data.result insert end [lindex $tmp $j]
+			.data.result insert end " "
+		}
+	}
+	set rec_cnt [llength $list]
+}
+
+proc gui {} {
+	global id
+	global rec_cnt
+	frame .query -relief raised -width 10c -height 5c -bd 2
+	label .query.label -text "Call:"
+	entry .query.name -width 20 -relief sunken -bd 2 -textvariable name 
+	label .query.rec_cnt_text -text "Record Count:"
+	label .query.rec_cnt_text1 -textvariable $rec_cnt
+	pack .query .query.label .query.label .query.name .query.rec_cnt_text \
+		.query.rec_cnt_text1 \
+		-side left
+	
+	bind .query.name <Return> { display_result $name $id ; set rec_cnt 1}
+	
+	frame .data
+	text .data.result -relief raised -bd 5
+	pack .data.result
+	
+	frame .buttons
+	button .buttons.do_search -text "Make Call" \
+		-command { set rec_cnt [display_result $name $id] }
+
+	button .buttons.exit -text Exit -command exit
+	
+	pack .buttons.do_search .buttons.exit -side left -padx 5m -pady 5m
+	
+	pack .query .data .buttons -side top
+}
+
+set rec_cnt 0
+set id [start_up]
+gui
+# set list [call_up "HOLT"]
+# set cnt [llength $fred]

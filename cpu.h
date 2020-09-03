@@ -1,0 +1,9 @@
+#define CPU_UNKNOWN 0
+#define CPU_X86 1
+#define CPU_PPC 2
+#define CPU_8XX 3
+#define CPU_AMD64 4
+#define CPU_SPARC 5
+#define CPU_COLDFIRE 6
+#define CPU_ARM 7
+#define CPU_MIPS 8

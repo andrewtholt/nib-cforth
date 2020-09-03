@@ -1,0 +1,1113 @@
+		Glossary for Forth in C
+		=======================
+
+
+(c) 1993,1996 Nigel Bromley: nib@dial.pipex.com or +44 7010 700NIB (700642).
+
+No warranties of any sort! Free use for non-commercial purposes only.
+Author's copyright notice should appear with your own on any derived
+versions.
+
+[last edit 1996-01-21]
+
+The state of the stack before and after calling each word is 
+indicated in the standard Forth way. For example:
+
+		n1  n2  --  n3
+
+indicates that at call n2 is on the top of the stack and n1 
+is below it, at return the stack has one fewer item with n3 at 
+the top. -- on its own implies that the stack is unaffected.
+
+Immediate words are marked [i]
+	
+!		d  a  --
+	Stores d at address a.
+
+#		double  --  double
+	Generates one digit of a number for output. See <#.
+
+#>		double  --  addr count
+	Terminates generation of a number for output. Drops internal 
+	remainder, and replaces it with count and address of the 
+	string of digits produced, ready for use by TYPE. See <#.
+	
+#INCLUDE	--
+	Not yet installed.
+
+#S		double  --  double
+	Used in formatted output, completes the output string with 
+	just sufficient digits, ie. suppressing leading zeros. See 
+	<#.
+
+' [i]		--  a
+	Used in the form ' <name>. Returns the address of the pfa of 
+	<name> if it is in the dictionary, or aborts with an error 
+	otherwise.
+
+'EMIT		--  a
+	Vector for EMIT.
+
+'KEY		--  a
+	Vector for KEY.
+
+'STREAM		--  a
+	Returns the address containing the next character in the 
+	input buffer.
+
+( [i]		--
+	Introduces a comment. Comment must be terminated by a ) on 
+	the same line. Note that ( is a token, therefore there must 
+	be white space after it.
+
+*		n1  n2  --  n3
+	Multiplies n1 by n2 giving n3 (signed).
+
+*/		n1  n2  n3  --  n4
+	Calculates n1 * n2 / n3, with the intermediate result being 
+	held to double precision.
+
+*/MOD		n1  n2  n3  --  n4  n5
+	Calculates n1 * n2 / n3. Returns quotient in n5, and 
+	remainder in n4.
+
++		n1  n2  --  n3
+	Adds n1 to n2 giving n3.
+
++!		d  a  --
+	Adds d to contents of address a.
+
++-		n1  n2  --  n3
+	If n2 is >= 0, then n3 = n1, else n3 = -n1.
+
++LOOP [i]	n  --
+	Used in DO loops. Index is updated by n (can be negative) 
+	instead of default 1 used by LOOP.
+
+,		d  --
+	Stores d in the next cell in the dictionary and advances the 
+	dictionary pointer by one cell.
+
+-		n1  n2  --  n3
+	Subtracts n2 from n1 leaving the result in n3.
+
+-FIND		--         (see FIND)
+	Parses a white space-delimited token from the input stream, 
+	then calls FIND to look it up in the dictionary.
+
+-TRAILING	a  n1  --  a  n2
+	Eats trailing spaces after a token. a points to some string; 
+	starts looking n1 beyond this and works backwards until it 
+	finds a non-space character, n2 is the offset from a to this 
+	character. 
+
+.		d  --
+	Print the number d (signed) in the current base.
+
+." [i]		--
+	Used with terminating " character. Prints characters between 
+	." and " except for the first space after ."
+
+.R		n1  n2  --
+	Print n1 using n2 columns.
+
+.S		--
+	Display the current stack contents. (See .SR and .SL.)
+	Not yet installed.
+
+.SL		--
+	Configure .S to display stack with top of stack to the left.
+	Not yet installed.
+
+.SR		--
+	Configure .S to display stack with top of stack to the 
+	right.
+	Not yet installed.
+
+.SS		--  a
+	Variable that saves printing order for .S (qv.).
+	Not yet installed.
+
+/		n1  n2  --  n3
+	Divide n1 by n2 giving n3 (signed).
+
+/LOOP [i]	n  --
+	Similar to +LOOP, but using an unsigned comparison.
+
+/MOD		n1  n2  --  n3  n4
+	Divide n1 by n2 giving n4, remainder n3.
+
+0		--  0
+	Push 0 zero onto the stack (faster than normal process for 
+	larger numbers which are handled by more general words such 
+	as LIT).
+
+0<		d  --  log
+	Push a logical value, true (non-zero) if d is negative, 
+	false (zero) otherwise.
+
+0=		d  --  log
+	Push true if d is zero, false otherwise.
+
+0>		d  --  log
+	Push true if d is positive, false otherwise.
+	
+0BRANCH		log  --
+	Used within compiled words, where it is put by compilation 
+	of various higher-level control words. Branches within word 
+	if log is false by offset amount contained in the following 
+	word.
+
+1		--  1
+	Pushes 1 onto the stack.
+
+1+		n1  --  n2
+	Adds one to n1 giving n2.
+
+1-		n1  --  n2
+	Subtracts 1 from n1 giving n2.
+
+2		--  2
+	Pushes 2 onto the stack.
+
+2*		n1  --  n2
+	Doubles n1 giving n2.
+
+2+		n1  --  n2
+	Adds 2 to n1 giving n2.
+
+2-		n1  --  n2
+	Subtracts 2 from n1 giving n2.
+
+2/		n1  --  n2
+	Divides n1 by 2 giving n2.
+
+:		--
+	Standard defining word for Forth words. A typical definition 
+	might be : add2 2 + ; which defines a word add2 which adds 
+	two to the value on top of the stack. In action, this word 
+	parses the following word, builds a dictionary header for 
+	it, sets up the search pointers to it and the standard code 
+	field pointer, and switches into compile state. : sets the 
+	cfa of the word being defined to point to the headerless
+	word DOCOL, the main threading operator, which saves the Forth 
+	instruction pointer onto the return stack and starts 
+	executing the next level down. 
+
+; [i]		--
+	Terminates definition of a Forth word see :. In action, this 
+	word compiles an EXIT word at the end of the parameter 
+	field, switches off the compiler and sets the smudge bit in 
+	the dictionary header to indicate a valid word.
+
+<		n1  n2  --  log
+	Log is true if n1 < n2, false otherwise.
+
+<#		double1  --  double1
+	Prepares for formatted number output. Double1 is the number 
+	to output (use s->d to extend a single to a double for signed
+	numbers, 0 for unsigned numbers). Formatted 
+	output uses #, HOLD and #S words within <# and #> to build a 
+	string of digits in the PAD. Digits are built in reverse 
+	order, starting with the least significant. Conversion uses 
+	the current BASE. # builds one digit, #S builds all 
+	remaining digits, avoiding leading zeros. HOLD (q.v.) is used 
+	to insert any character into the string of digits, eg. a 
+	decimal point. The number for conversion must be positive, 
+	SIGN (q.v.) may be used to add a sign character if required. 
+	For example, : OUTHEX 0 <# 48 HOLD # # # # #> TYPE ; will, 
+	if the base is hex, output the integer on the stack as a 4-
+	digit number with a following H. Or: : OUTDEC 0 <# # # 46 
+	HOLD #S #> TYPE ; will, if the base is decimal, print the 
+	number on the stack / 100 in the form d.dd.
+	
+<+LOOP>		n  --
+	Compiled action for +LOOP.
+
+<.">		--
+	Compiled action for ." - prints counted string following 
+	this word.
+
+</LOOP>		n  --
+	Compiled action for /LOOP.
+
+<<CMOVE>	a1  a2  n  --
+	Action for <CMOVE.
+
+<ABORT">	log  --
+	Compiled action for ABORT".
+
+Note: <BUILDS has been renamed to CREATE.
+<BUILDS		--
+
+<CMOVE		a1  a2  n  --
+	Moves n bytes from a1 to a2, starting with the highest 
+	address, ie. a1+n-1. Suitable for moving to higher address 
+	when source and destination areas overlap.
+
+<CMOVE>		a1  a2  n  --
+	Action for CMOVE.
+
+<DO>		n1  n2  --
+	Compiled action for DO.
+
+<EMIT>		ch  --
+	Action for the vectored word EMIT. Writes character ch on
+	the console.
+	 
+<FEMIT>		ch  --
+	Alternative action for the vectored word EMIT. Writes character 
+	ch to the file last opened for write.
+
+<FILL>		a  n  c  --
+	Action for FILL.
+
+<FIND>		p1  p2  --  pfa  cnt  1  [or]
+		p1  p2  --  0
+	Searches in context pointed to by p2 for word (in header 
+	format) pointed to by p1. If not found, 0 is returned. If 
+	found, 1 is returned, and under that the count and flag byte 
+	of the matching entry and its pfa.
+
+<FKEY>		--  ch
+	Alternative action for the vectored word KEY. Reads one character
+	from the last file opened for read.
+
+<KEY>		--  ch
+	Action for the vectored word KEY. Reads one character from the
+	console.
+
+<LOOP>		--
+	Compiled action for LOOP.
+
+=		n1  n2  --  log
+	Returns logical true if n1=n2, false otherwise.
+
+>		n1  n2  --  log
+	Returns logical true if n1>n2, false otherwise.
+
+>IN		--  a
+	User variable, indicating the position within the current 
+	input line (TIB or screen).
+
+>R		n  --
+	Transfer n to the return stack.
+
+?		a  --
+	Print the value at address a.
+
+?COMP		--
+	Aborts with "Compile error" if STATE is zero, i.e. not compiling,
+
+?CSP		--
+	Compare stack pointer with value saved at start of 
+	definition (in CSP) and abort with "Definition not finished" 
+	if unequal.
+
+?DUP		0  --  0		OR
+		n  --  n  n
+	Duplicate top stack entry if it is not zero.
+
+?PAIRS		n1  n2  --
+	If n1 is not equal to n2, abort with "Conditionals not 
+	paired". (Conditionals leave markers on stack at compile 
+	time to check pairing.)
+
+?STACK		--
+	Normally used by Forth to check that dictionary and stack are
+	not about to collide. In this implementation, the virtual
+	machine checks this continuously. For historical reasons, this
+	word is retained, but may have alternative functions, such as
+	early warning of data areas becoming full.
+
+?STREAM		n  --
+	If n is not zero, abort with "Input stream exhausted".
+
+?TERMINAL	--  d
+	Action depends on platform. On DOS systems, this word does a BIOS
+	call to check keyboard status, returning true (d!=0) if a character
+	is waiting, false (d==0) otherwise. Any waiting character is read
+	and discarded. On Unix systems, at present, ?terminal always returns
+	true.
+
+@		a  --  n
+	Fetch data d at address a.
+
+ABORT		--
+	Resets the stack pointer, and re-enters the command line
+	interpreter.
+
+ABORT" [i] log --
+	Followed by " terminated string. If log is true, aborts
+	whatever is going on, prints the string, and returns to interpret
+	keyboard input. If log is false, nothing happens, and control is
+	passed to the word after the string.
+
+ABS		n1  --  n2
+	If n1 is negative, n2 = -n1, else n2 = n1.
+
+AGAIN [i]	--
+	Compiles a branch back. Can be used as BEGIN a a a AGAIN to 
+	make an infinite loop.
+
+ALIGN_PTR	addr  --  addr
+	Modifies an address if necessary to meet alignment criterion.
+	If addr does not align (as defined by the ALIGN macro in the C
+	source file FORTH.H) then is it incremented until it does.
+
+ALLOT		n  --
+	Move HERE forward by n bytes, reserving space on the 
+	dictionary.
+
+AND		n1  n2  --  n3
+	Bit-wise and of n1 and n2, giving n3.
+
+BASE		--  a
+	User variable, containing the current base for numeric input 
+	and output.
+
+BEGIN [i]	--
+	Marks the start of a conditional loop. See WHILE and UNTIL.
+
+BL		--  n
+	Pushes the ASCII value of space onto the stack.
+
+BLANK		a1  n  --
+	Write n spaces, starting at address a1.
+
+BRANCH		--
+	Unconditional branch within a sequence of Forth words. 
+	Compiled by words such as ELSE and REPEAT. Branch offset is 
+	contained in the word following.
+
+BYE		--
+	Quit back to calling shell.
+
+BYTES/CELL	--  val
+	Constant, returns the number of bytes making one Forth cell,
+	usually 2 for 16-bit systems and 4 for 32-bit.
+
+C!		ch  a  --
+	Store character ch at address a.
+
+C,		ch  --
+	Store character ch in next cell on end of dictionary.
+
+C@		a  --  ch
+	Fetches character at address a.
+
+CFA		pfa  --  cfa
+	Given the pfa of a word, returns the cfa.
+
+CLOSEF		h  --  n  e
+	Close file with file pointer h. If error code e is non-zero,
+	n contains an error code. Not yet installed.
+
+CMOVE		from-add  to-add  count  ---
+	Move count bytes of data from from-add to to-add. CMOVE 
+	moves the lowest addressed byte first, ie. from-add, so is safe
+	if moving to a lower address if the source and destination 
+	areas overlap.
+	
+COLD		--
+	Resets to the initial state.
+
+COMPILE		--
+	An instruction to compile and not execute the next word.
+	Typically used by immediate words such as DO or ELSE to 
+	compile their run-time action words. This is NOT an 
+	immediate word, it operates at run time. Not to be confused 
+	with [COMPILE].
+
+CONSTANT	n  --
+	Defines a constant, whose name follows this declaration, and 
+	whose value is on the stack.
+
+CONTEXT		--  a
+	Returns a pointer to the vocabulary link within the context 
+	vocabulary, the one that it searched to interpret input. The 
+	link is located within the dictionary entry for the 
+	vocabulary. CONTEXT @ @ returns a pointer to the last-
+	created word (nfa) within the context vocabulary. The lfa of 
+	that word points to the previous, and so on down to a null 
+	pointer.
+
+CONVERT		d1  a  --  d2  a
+	Converts a number using current base, from counted string at 
+	a (count byte ignored), to double in d2. d1 is normally 
+	zero, if not it is treated as high-order digits already 
+	entered. DPL is incremented for each digit if it is not -1, 
+	ie. if decimal point has been seen (by NUMBER). Stops on any 
+	non-numeric.
+
+COUNT		a1  --  a2  n
+	Given the address of a counted string a1, returns pointer 
+	after the count byte a2, and count n.
+
+CR		--
+	Prints carriage return and line feed.
+	
+Note: this has been "hidden".
+CREATE		--
+	Main word to create a dictionary entry. Word following in 
+	input stream defines the header. The cfa is set such that
+	execution of a partial creation will not crash. Does NOT 
+	leave the entry SMUDGEd.
+
+CREATEF		a  p  --  h  e
+	Creates and opens a file specified by the ASCIIZ string 
+	pointed to by p, with attributes a. Returns error flag e, 
+	and file pointer h. If e is non-zero (error), then h contains an 
+	error code. Not yet installed.
+
+CSP		--  a
+	User variable used to store position of stack pointer at the 
+	start of a definition, for ?CSP to check at the end.
+
+CURRENT		--  a
+	Returns a pointer to the vocabulary link within the current 
+	vocabulary, the one to which new definitions are added. See 
+	CONTEXT.
+
+D!		double  a  --
+	Store double at address a.
+
+D+		d1  d2  --  d3
+	Add double d1 to double d2 giving double d3.
+
+D+-		d1  n  --  d2
+	If n is positive then d2=d1, else d2=-d1.
+
+D.		double  --
+	Print double number.
+
+D.R		double  n  --
+	Print double using n columns.
+
+D<		d1  d2  --  log
+	Log is true if double d1<double d2, else false.
+
+DABS		d1  --  d2
+	Double d2 is the absolute value of double d1.
+
+DDROP		d1  d2  --  d1
+	Drop double from stack.
+
+DDUP		d1  --  d1  d1
+	Duplicate double at top of stack.
+
+DECIMAL		--
+	Set numeric base to decimal.
+
+DEFINITIONS	--
+	Set the CONTEXT vocabulary to the CURRENT vocabulary, so 
+	that new definitions will be placed there.
+
+DEPTH		--  n
+	Returns the present depth of the stack (in cells, i.e. number
+	of enties).
+
+DIGIT		ch  b  --  n  1     or
+		ch  b  --  0
+	Converts character ch representing a digit in base b into 
+	its value in n. If valid digit, top of stack is non-zero 
+	with the value below, if not valid digit top of stack is 
+	zero and no value is returned.
+
+DISP-OUTPUT	--
+	Switch the action of EMIT to do <EMIT>.
+
+DLITERAL [i]	double  --
+	An instruction to compile the double on the stack (at 
+	compile time) to a literal that will return the same value 
+	at run time.
+
+DNEGATE		d1  --  -d1
+	Negate the double at top of stack.
+
+DO [i]		n1  n2  --
+	Used to control iterative loops:
+
+		DO a a a LOOP
+
+	or modified forms with explicit increments, using +LOOP and 
+	/LOOP. The loop index (obtainable using I) starts at n2, and 
+	increments by one for each iteration (with LOOP) until it is 
+	>= n2, when the loop exits, and control passes to the word 
+	after LOOP. Ie. 4 0 DO .. LOOP is executed four times, with 
+	the loop index equal to 0, 1, 2 and 3. Increments with +LOOP 
+	can be negative; the termination condition is automatically
+	inverted. /LOOP has an explicit increment, like +LOOP, but has
+	an unsigned comparison.
+
+DOES>		--
+	Into the advanced stuff. DOES> is part of a defining word - 
+	a Forth word that creates other Forth words. Examples of 
+	defining words are : and VARIABLE. In a typical defining 
+	word:
+
+		: CONSTANT <BUILDS , DOES> @ ; 
+
+	<BUILDS , is the compile-time code, and @ the run-time. Eg., 
+	if this was invoked with 42 CONSTANT UNIVERSAL, then a 
+	dictionary entry for UNIVERSAL would be CREATEd, and the 
+	value 42 entered after it by , making a standard constant 
+	entry. At run time, ie. by invoking UNIVERSAL, the code 
+	after DOES> in the defining word is executed, with the stack 
+	having a pointer to the pfa of UNIVERSAL; the @ there 
+	fetches the 42 in the pfa of UNIVERSAL.
+
+DP		--  a
+	User variable holding a pointer to the next free location in 
+	the dictionary. Normally used by HERE, which is DP @.
+
+DPL		--  a
+	User variable. Holds the position of the decimal point in 
+	the last numeric input, or -1 if none.
+
+DROP		a  --
+	Drop the top entry from the stack.
+
+DUMP		a  n  --
+	Dump n bytes starting at address a in hex and ASCII forms.
+
+
+DUP		a  --  a  a
+	Duplicate the top entry on the stack.
+
+ELSE [i]	--
+	Used in conditional statements, see IF.
+
+EMIT		ch  --
+	Prints the character contained in the ls 8 bits of word ch.
+	EMIT is a vectored word; its action can be changed. However,
+	because of the structure of this Forth, it can only be switched
+	between <EMIT> for console output and <FEMIT> for file output,
+	using FILE-OUTPUT and DISP-OUTPUT.
+
+ENCLOSE		a  ch  --  a  c1  c2  c3
+	Examines text starting at address a, and attempts to enclose 
+	the next token, delimited by character ch or null. On 
+	return, c1 is the offset from a to the first character of 
+	the token, c2 the offset to the next character after the 
+	last of the token (normally a ch character) and c3 the 
+	offset to begin searching for the next token (usually c2+1). 
+	If null is found before any non-ch characters (ie. no token 
+	found), returns with c3<c2. If no ch characters were found 
+	between the token enclosed and null, returns with c2=c3. 
+
+ENDIF [i]	--
+	A synonym that I prefer for THEN.
+
+ENDF		--
+	Used within a Forth text file to indicate end of file. 
+	Useful to switch off before physical end of file, but if not 
+	present input will stop cleanly at physical end of file.
+
+EXECF		f  --  en  ef
+	Requests shell to run programme specified by ASCIIZ string 
+	pointed to by f. ef is an error flag, and en the error code
+	valid if ef is non-zero. Not yet installed.
+
+EXECUTE		cfa  --
+	Execute the Forth word whose cfa is on the stack. (Control 
+	returns to the word that calls the word containing the 
+	EXECUTE.)
+
+EXIT		--
+	Code word that unstacks the Forth instruction pointer and 
+	calls NEXT. It is the standard termination for a Forth non-
+	code word, and is compiled by ;
+
+EXPECT		a  n  --
+	Collects keyboard input to a null-terminated string in the 
+	buffer at address a. Stops on CR or reaching n characters.
+
+FENCE		--  a
+	User variable holding lowest address that user may FORGET, 
+	thus protecting the "system" part of the dictionary.
+
+FILE-INPUT	--
+	Switches KEY to do <FKEY>.
+
+FILE-OUTPUT	--
+	Switches EMIT to do <FEMIT>.
+
+FILL		a  n  c  --
+	Writes character c into n successive bytes starting with a.
+
+FIND		p1  p2  --  pfa  cf  1      (or)
+		p1  p2  --  0
+
+	The basic word for searching the dictionary. p1 is a pointer 
+	to the word to be matched, as a counted string. p2 is a 
+	pointer to the context - a pointer to the first entry in the 
+	null-pointer-terminated linked-list representing the words 
+	available at the moment. If the word is found, top-of-stack 
+	is true (1), and below is the pfa of the matching entry and 
+	the count field of that entry (contains immediate flag). It 
+	the word is not found, the stack has only the false logical 
+	value and no data.
+
+FORGET		--
+	Used in the form FORGET <name>. Removes all of the dictionary
+	between the latest entry and <name> inclusive, including
+	any vocabularies in this range.
+
+FORTH [i]	--
+	Sets context to the standard vocabulary.
+
+GETF		--
+	Followed by a pathname redirects the keyboard to that file 
+	and thus loads the Forth text contained therein. GETFs may 
+	be nested up to 10 deep, ie. files may contain GETFs to 
+	include other files.
+
+H.		d  --
+	Writes the value on the top of the stack as an unsigned hex
+	number, regardless of the current BASE.
+
+HERE		--  a
+	Returns the address a of the next free byte at the end of 
+	the dictionary.
+
+HEX		--
+	Sets the operating base to 16 decimal.
+
+HLD		--  a
+	User variable, holding the current address within PAD. See 
+	<# and HOLD.
+	
+HOLD		ch  --
+	Used with formatted number output, see <#. Puts character ch 
+	into the string being build at PAD.
+
+I		--  n
+	Used within a DO loop. Returns the value of the loop index.
+
+I'		--  n
+	Used within a DO loop .Returns the limit value of the index.
+
+ID.		nfa  --
+	Given the nfa of a dictionary entry, print its name.
+	Not yet installed.
+
+IF [i]		log  --
+	Part of the basic conditional structure:
+		IF a a a ELSE b b b THEN or
+		IF a a a THEN.
+	In both cases, if log is true (non-zero) then words a a a 
+	are executed. In the first form, if log is false (zero) 
+	words b b b are executed. ENDIF is supplied as a synonym for 
+	THEN.
+
+IMMEDIATE	--
+	Sets the immediate flag in the last-created dictionary 
+	header. Immediate words are executed as they occur, even 
+	during compilation. Typically, compiler control words and 
+	structure words such as IF and WHILE are immediate. Some 
+	immediate words are marked [i], but I doubt I will have got 
+	all of them.
+
+INTERPRET	--
+	Basic loop to interpret one line of input. It is called by 
+	QUIT. Depending on state, each token on the line is either 
+	interpreted or compiled; immediate words are always 
+	interpreted. INTERPRET is an infinite loop; the escape is by 
+	the attempt to execute the null at the end of an input line. 
+
+J		--  n
+	Used within a pair of nested DO loops, J returns the loop 
+	index of the outer loop.
+
+KEY		--  ch
+	Fetches one character from the keyboard to the ls 8 bits of 
+	ch.
+
+KEYB-INPUT	--
+	Switches KEY to do <KEY>.
+
+LATEST		--  a
+	Returns a pointer to the last-created entry in the 
+	dictionary.
+
+LEAVE		--
+	Quits the nearest DO loop.
+
+LFA		pfa  --  nfa
+	Given the pfa of a word (returned by '), returns the lfa.
+
+LIT		--  n
+	Appears in compiled words only. Pushes onto the stack the 
+	number in the following cell.
+
+LITERAL [i]	n  --
+	Used in some complex situations to force the compiler to 
+	generate a LIT word with following argument n, usually when 
+	it is required to do some calculation at compile-time, to 
+	generate a single value to be used at run-time.
+
+LOOP [i]	--
+	Part of a DO loop, see DO.
+
+M*		n1  n2  --  d
+	Multiply single-length n1 and n2 to give double d.
+
+M*/		d1  n1  n2  --  d2
+	Calculate d2=d1*n1/n2, where d1, d2 are double and n1, n2 
+	are single, using a triple-length intermediate result.
+
+M+		d1  n  --  d2
+	Calculate double d2 = double d1 + single n.
+
+M/		d1  n1  --  n2  n3
+	Divide double d1 by single n1 giving single quotient n3 and 
+	single remainder n2.
+
+M/MOD		d1  n1  --  n2  d2
+	Divide double d1 by single n1 giving double quotient d2 and 
+	single remainder n2.
+
+MAX		n1  n2  --  n3
+	n3 is the greater of n1 and n2.
+
+MIN		n1  n2  --  n3
+	n3 is the least of n1 and n2.
+
+MOD		n1  n2  --  n3
+	Divide n1 by n2 and put remainder in n3.
+
+MOVE		a1  a2  n  --
+	Moves n cells from a1 to a2, using CMOVE (q.v.).
+
+NEGATE		n1  --  n2
+	Makes n2=-n1.
+
+NFA		pfa  --  nfa
+	Given the pfa of a word, returns the nfa.
+	
+NOT		n1  --  n2
+	If n1=0 returns n2=1, else n2=0.
+
+NUMBER		p  --  double
+	Given the address of a counted string, p,  representing a number, 
+	returns the converted value as a double integer. Converts 
+	using the current base. 
+
+OPENF		a  p  --  h  e
+	Opens an already existing file specified by the ASCIIZ 
+	string pointed to by p, with access mode a. Returns error 
+	flag e, and file pointer h. If e is non-zero (error), then h 
+	contains the error code.
+
+OR		n1  n2  --  n3
+	n3 is the bit-wise or of n1 and n2.
+
+OUT		--  a
+	User variable, counting the current position within the 
+	output line.
+
+OVER		a  b  --  a  b  a
+	Stack manipulation operation.
+
+P!		d  a  --
+	Pokes ls 8 bits of d into byte port address a.
+
+P@		a  --  d
+	Peeks byte word port address a to ls 8 bits of d.
+
+PAD		--  a
+	Returns address of a special string handling buffer.
+
+PARSE_NAME	--  a
+	Takes the next space-delimited token from the input stream, 
+	copies it to the end of the dictionary, null terminates it, 
+	and returns the address of the first character. This parses 
+	a pathname and leaves it in a suitable form for OPENF or 
+	CREATEF. (The string is left at HERE as a counted string, 
+	with the count not including the null.)
+
+PFA		nfa  --  pfa
+	Given nfa finds the pfa of a word.
+
+PICK		n3  n2  n1  x  --  n1  n2  n3  nx
+	Picks the nth element from the stack and copies it to top of 
+	stack. Counting is from top of stack as one.
+
+PW!		d  a  --
+	Pokes d into word port address a.
+
+PW@		a  --  d
+	Peeks word port address a to d.
+	
+QUERY		--
+	Calls EXPECT to build a maximum 80-character line of 
+	keyboard input in the terminal input buffer TIB. Line is 
+	terminated by null.
+
+QUIT		--
+	QUIT controls the line-by-line action of Forth. It is called 
+	at start-up and after an error. It resets the return stack, 
+	stops compilation, and then sits in a loop fetching lines of 
+	input and calling INTERPRET to process them.
+
+R0		--  a
+	Returns the address of the user variable which holds the 
+	initial return stack pointer.
+
+R>		--  n
+	Pops the top value from the return stack.
+
+R@		--  n
+	Returns the value on top of the return stack. The return 
+	stack handles the nesting of Forth words, but it is 
+	convenient to use it as a temporary store during 
+	calculations. If use of the return stack in this way is 
+	not balanced within a Forth word, the system will crash.
+
+READF		h  p  n  --  en  ef
+	Reads up to n bytes from file with pointer h to buffer at p 
+	(in our ds). If error flag ef is zero, en contains number of 
+	bytes actually transferred (<=n). This can be zero (eof 
+	indication). If ef is non-zero, en has an error code. 
+	Not yet installed.
+
+REPEAT [i]	--
+	Part of BEGIN..WHILE..REPEAT. See WHILE.
+
+ROLL		a  b  c  d  e  4  --  a  c  d  e  b
+	The stack diagram shows an example for a ROLL of 4. In 
+	general, the nth element (top = 1) is taken to the top and 
+	the others that were above it moved down one. Entries below 
+	the nth are not affected.
+
+ROT		a  b  c  --  b  c  a
+	Rotates the top three elements on the stack.
+
+RP!		--
+	Resets the return stack.
+
+RP@		--  n
+	Returns the present position of the return stack pointer.
+
+S->D		n  --  double
+	Converts signed integer n into signed double.
+
+S0		--  n
+	Returns the initial stack pointer position. (Equivalent to 
+	SP0 @). 
+
+SAVE		--
+	Not yet installed.
+
+SHELL		--
+	Not yet installed.
+
+SIGN		n  --
+	Adds sign to formatted number output. If n < 0 adds minus 
+	sign to number string being built at PAD. See <#.
+	
+SMUDGE		--
+	Toggles the smudge bit in the most recently created 
+	dictionary entry. The smudge bit is used to prevent words 
+	from being executed until they have been completely defined.
+
+SP!		--
+	Resets the user stack pointer to its initial value.
+
+SP0		--  a
+	User variable. Contains the initial value of the user stack 
+	pointer.
+	
+SP@		--  n
+	Returns the current value of the user stack pointer.
+
+SPACE		--
+	Emit one space.
+
+SPACES		n  --
+	Emit n spaces.
+
+STATE		--  n
+	System variable holding the current state. State is 0 for 
+	interpreting, -40 for compiling.
+
+SWAP		a  b  --  b  a
+	Swaps the two top entries on the stack.
+
+THEN [i]	--
+	Used in IF .. ELSE .. THEN statements. See IF.
+
+TIB		--  a
+	User variable containing the address of the terminal input 
+	buffer.
+
+TOGGLE		a  ch1  --  
+	Xor byte at address a with ch1.
+
+TOP		--  d
+	Returns the highest address available for the dictionary.
+
+TRAVERSE	a1  n  --  a2
+	n is +/- 1. Starting from address a1, and going forwards 
+	(n=1) or backwards (n=-1), find the other end of a name field,
+	returning its address in a2.
+
+TYPE		a  n  --
+	Type n characters starting with address a.
+
+U*		n1  n2  --  d
+	Unsigned multiplication of singles n1 and n2 giving double 
+	d.
+
+U.		n  --
+	Print n as an unsigned integer.
+
+U/MOD		d  n1  --  n2  n3
+	Divide unsigned double d by unsigned single n1 to give 
+	single quotient n3 and single remainder n2.
+
+U<		n1  n2  --  log
+	Return logical true (non-zero) if abs(n1)<abs(n2), false 
+	otherwise.
+
+UNTIL [i]	log  --
+	Used in the loop structure:
+
+		BEGIN a a a UNTIL
+
+	The words a a a must return a logical value, which is 
+	removed by UNTIL. Words a a a are always executed at least 
+	once. If the logical value given to UNTIL is true (non-zero) 
+	then control is passed to the word after UNTIL; if it is 
+	false (zero) the words a a a are executed again.
+
+UP		--  a
+	Constant. Pointer to start of user variable area.
+
+USER		n  --
+	Creates the nth USER variable (contained in a special USER 
+	space that is saved along with the dictionary). The name of the 
+	user variable follows in the input stream. User variables are
+	normally initialised by COLD; new ones created with this word
+	will not be.
+
+VARIABLE	--
+	Creates a variable whose name follows in the input stream. 
+	No initialisation in this Forth.
+
+VERSION		--
+	Prints data on the compile options and modification history.
+	Not yet installed.
+
+VLIST		--
+	Lists the names of all of the dictionary entries in the 
+	CONTEXT vocabulary, in reverse order of creation.
+	Not yet installed.
+
+VOC-LINK	--  a
+	User variable. Stores a pointer to the last-created 
+	vocabulary entry.
+
+VOCABULARY	--
+	Creates a new vocabulary. Name of vocabulary follows in 
+	input stream.
+
+WARNING		--  a
+	User variable. If zero suppresses warnings from compiler.
+
+WHERE		--
+	Routine to indicate which word in the last input line 
+	resulted in the last error message. Called whenever error 
+	found in input.
+
+WHILE [i]	log  --
+	Loop control word, used in the structure:
+
+		BEGIN a a a WHILE b b b REPEAT
+
+	Words a a a are executed at entry, and must return a logical 
+	value, which is removed by WHILE. If the logical value is 
+	true (non-zero), words b b b are executed, and then control 
+	goes back to a a a. If the logical value is false (zero) 
+	then words b b b are not executed, and control resumes with 
+	the word following the REPEAT.
+	
+WIDTH		--  a
+	User variable defining the maximum length of a dictionary 
+	name field.
+
+WORD		char  --  addr
+	Word delimited by char moved from input line to end of 
+	dictionary as a counted string. addr points to count byte.
+	This is the standard parsing word used by the Forth system. 
+
+WRITEF		h  p  n  --  en  ef
+	Writes up to n bytes to file with pointer h from buffer at p.
+	If error flag ef is zero, en contains number of 
+	bytes actually transferred (<=n). This can be zero. If ef is 
+	non-zero, en has an error code.
+	Not yet installed.
+
+X (NULL) [i]	--
+	Special word, used to catch the outer interpreter at end of 
+	input line, where a null is kept by EXPECT. Uses a flag to cause
+	an exit from the "infinite loop" in INTERPRET.
+
+XOR		n1  n2  --  n3
+	n3 is the bit-wise exclusive or of n1 and n2.
+	
+[ [i]		--
+	Switches off the compiler.
+
+[COMPILE] [i]	--
+	Forces the following immediate word to be compiled and not 
+	interpreted. This is an immediate word. Not to be confused 
+	with COMPILE (which means I often DO confuse them).
+
+]		--
+	Switches on the compiler.
+
+
+nib
+
+Added by Andrew Holt
+
+QUIET
+    Any output to stdout is supressed.
+
+VERBOSE
+    Output to stdout is delivered. Default behaviour.
+
+CPU
+    Return a number indicating the CPU type:
+
+    UNKNOWN 0
+    X86 1
+    PPC 2
+    8XX 3
+    AMD64 4
+    SPARC 5
+    COLDFIRE 6
+    ARM 7
+    MIPS 8
+
+OS
+    Return a number indicating the OS type:
+
+    UNKNOWN 0
+    LINUX 1
+    DARWIN 2
+    FREEBSD 3
+    SOLARIS 4
+    UCLINUX 5
+    QNX 6
+
+EVALUATE  cmd len -- flag
+    Treat the string given by cmd and len as a command and execute, flag is
+    non-zero on success.
+
+SERVENT   cmd len --
+    The string, given by cmd and len is the name of a on OS command that 
+    sends forth "phrases" to standard out.  The phrases are then evaluated.
+    

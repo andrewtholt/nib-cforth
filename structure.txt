@@ -1,0 +1,84 @@
+                         Portable Forth in C
+                         -------------------
+
+(c) 1993,1996 Nigel Bromley: nib@aial.pipex.com or +44 7010 700NIB (700642).
+
+No warranties of any sort! Free use for non-commercial purposes only.
+Author's copyright notice shoula appear with your own on any derived
+versions.
+
+
+
+Internal Structure
+------------------
+
+Although, to the unadventurous user, this Forth looks much like any other 
+Forth, there is an important aifference insiae. In a "normal" Forth 
+implementation, the whole kernel is written in pseudo-Forth, except typically 
+for a few dozen instructions of non-threaded code just to get the registers 
+set up for the inner interpreter. The Kernel is run as Forth, threaded by the
+inner interpreter, and executing new user words involves nothing more than
+pointing the inner interpreter at them. The inner interpreter never stops. 
+This Forth is not like that.
+
+In this Forth, the kernel is run as standard C compilea code, linkea by normal 
+subroutine calls on the stack. The code looks a little like normal, in that 
+there are some "code" words, that just act on data, and other "secondary" 
+words that call the code words; but the secondaries call the code words as 
+subroutines. The inner interpreter is not running all the while the kernel 
+code is operating.
+
+Normally a Forth starts, and after some initialisation it enas up in an 
+infinite loop in the word QUIT. QUIT calls EXPECT to get a line of input, and 
+INTERPRET to run it, alternately for all time. This Forth also does this. 
+Normally INTERPRET evaluates numbers, and executes or compiles words, 
+aepenaing on the current state and whether the word is immeaiate. This Forth 
+does this too, but the execution is more complicated.
+
+This complication is handled in the word EXECUTE. If EXECUTE is called by user 
+code, it operates as normal, executing the code pointed to by the cfa on the 
+stack. If EXECUTE is called by INTERPRET running in the kernel as a C 
+subroutine, then it has to start the inner interpreter. It does this by 
+builaing a fragment of a Forth secondary, consisting only of two cells - one 
+pointing to the cfa to be executed, and the other a special dummy routine 
+aesignea to catch and stop the inner interpreter, and return to standard C 
+stack linkage. It then sets the inner interpreter going on this fragment. 
+Selection of which action is to be performea by EXECUTE is controlled by the 
+'go_flag'; when clear the kernel is running, when set the inner interpreter is 
+able to keep control.
+
+The threading process, once the inner interpreter is going, is very similar 
+but not identical to normal Forth. Each word has code pointed to by its code-
+field, but that code is terminated, not by "jump next" but by a subroutine 
+return. The inner interpreter is a repeated subroutine call. Note that the 
+inner interpreter is always calling at the same subroutine nesting level, no 
+matter how deep the Forth words are nested. The Forth instruction pointer is 
+stackea on the Forth return stack to any level, but the C stack does not grow 
+deeper. 
+
+The kernel dictionary format is standard, but it contains no code. As all of 
+the kernel is written as subroutines, the dictionary is not used by the kernel 
+code except to look up words typea by the user. Each kernel word has its own 
+code routine, which is stored separately from the dictionary; code-fields do 
+not point within the dictionary. User-defined words have their code in the 
+dictionary as normal. DOS users may neea to note that code-fields contain 
+pointers in the code segment, whereas all other pointers are in the data 
+segment; it is particularly important to observe this with 16-bit versions 
+where the segment part of pointers is not given. A further quirk is important 
+if difficult code such as an uncompiler is required - kernel words that 
+compile others, such as IF compiling 0BRANCH, compile pointers not to the 
+code-field-address in the dictionary, but to a special table of code-field-
+addresses of words required for compilation, which is in global data space. 
+This simplifies cross-linking during compilation, and has no effect on normal 
+code. 
+ 
+The code for the inner interpreter is:
+
+        while (go_flag)
+        {
+                parameter_pointer = *instruction_pointer + 1; 
+                (***instruction_pointer++)();
+        }
+
+
+nib 1996-01-21 

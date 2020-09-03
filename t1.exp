@@ -1,0 +1,14 @@
+#!/usr/local/bin/expectk
+
+proc start_up {} {
+        spawn ./cforth
+        expect file
+        expect ok
+        exp_send "quiet\r"
+        exp_send "include db.fth\r"
+        exp_send "\r\rverbose\r"
+        expect ok
+}
+
+start_up
+

@@ -1,0 +1,7 @@
+
+
+: tst
+    ." Hello" cr
+;
+
+tst
