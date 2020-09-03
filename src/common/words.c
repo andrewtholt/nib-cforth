@@ -2788,9 +2788,7 @@ c_debug()
     }
 }
 
-void
-c_x()
-{
+void c_x() {
     break_flag = TRUE;
 }
 
@@ -3023,11 +3021,9 @@ void c_cpu()
     if ((strcasecmp(buf.machine, "i686") == 0) || (strcasecmp(buf.machine, "i386") == 0) || (strcasecmp(buf.machine, "x86pc") == 0) )
     {
         cpu = CPU_X86;
-    } else if ( (strcasecmp(buf.machine, "Power Macintosh") == 0) || (strcasecmp(buf.machine, "ppc") == 0) )
-    {
+    } else if ( (strcasecmp(buf.machine, "Power Macintosh") == 0) || (strcasecmp(buf.machine, "ppc") == 0) ) {
         cpu = CPU_PPC;
-    } else if (strcasecmp(buf.machine, "armv5tel") == 0)
-    {
+    } else if ((strcasecmp(buf.machine, "armv5tel") == 0) || (strcasecmp(buf.machine, "armv6") == 0) ) {
         cpu = CPU_ARM;
     } else if (strcasecmp(buf.machine, "m68knommu") == 0)
     {
