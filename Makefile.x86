@@ -1,5 +1,5 @@
 # DB=../../smallDatabase/db.o
-CFLAGS=-g -m32 -DLINUX # -DDB
+CFLAGS=-g -m32 -DLINUX -Wwrite-strings
 ARCHIVE=$(HOME)/Archive
 ARCHIVE_FILE=$(ARCHIVE)/cforth.tar
 FLAG=BackUp.txt

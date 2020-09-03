@@ -267,7 +267,8 @@ void create_kernel(void)
 	create_codeword("align-ptr", c_align_ptr, 0);
 	create_codeword("", c_x, IMMED);	/* null word */
 
-#ifdef LINUX
+// #ifdef LINUX
+#if 0
 	create_codeword("fopenr", c_fopenr, 0);
 	create_codeword("fopenw", c_fopenw, 0);
 	create_codeword("fopena", c_fopena, 0);

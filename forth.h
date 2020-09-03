@@ -146,7 +146,7 @@ extern CODE_FIELD cf_aemit, cf_akey, cf_afkey, cf_afemit,
 	cf_adotq, cf_lit, cf_branch, cf_zbranch, cf_exit;
 
 #define SCRATCH_SIZE 4 /* this must be a power of 2 e.g. 2,4,8,16,... */
-char scratchString[SCRATCH_SIZE][255];
+extern char scratchString[SCRATCH_SIZE][255];
 
 
 /* -------------------------------------------------------------------------

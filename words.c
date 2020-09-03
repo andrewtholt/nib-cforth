@@ -53,6 +53,9 @@ extern char *prompt;
 /* ... ATH Other globals */
 int             verbose = 1;
 int selector=0;
+
+int c_prim_evaluate(char *cmd);
+
 void
 c_bye()
 {
@@ -396,7 +399,7 @@ int c_prim_evaluate(char *cmd)
 
     buffer[0] = len & 0x7f;
     strcpy(&buffer[1], cmd);
-    push(buffer);
+    push((CELL)buffer);
     user(CONTEXT);
     c_at();
     c_at();
@@ -411,7 +414,7 @@ int c_prim_evaluate(char *cmd)
     return(status);
 }
 
-c_my_evaluate(char *ptr) {
+void c_my_evaluate(char *ptr) {
 //   printf("%s\n",ptr);
     /*
     
@@ -3133,7 +3136,8 @@ void c_dump(void)
     int offset=0;
 
     count=pop();
-    ptr=(void *)pop();
+//    ptr=(void *)pop();
+    ptr=(char *)pop();
 
     printf("\r\n");
 

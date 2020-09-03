@@ -18,9 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
+#include <unistd.h>
 
 #include "forth.h"
 #include "words.h"
+
+char scratchString[SCRATCH_SIZE][255];
 
 extern char    *optarg;
 char           *prompt;
