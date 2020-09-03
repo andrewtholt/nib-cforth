@@ -1203,8 +1203,9 @@ c_qcsp()
         uabort("definition not finished");
 }
 
+#pragma weak c_aemit
 void c_aemit() {
-
+/*
     if (verbose) {
         // putchar((BYTE) pop());
         PUTC((BYTE) pop());
@@ -1215,11 +1216,12 @@ void c_aemit() {
     push(1);
     user(OUT);
     c_pstor();
+    */
 }
+#pragma weak c_akey
 
-void
-c_akey()
-{
+void c_akey() {
+/*
 #if UNIX
     push(getchar());
 #endif
@@ -1231,10 +1233,13 @@ c_akey()
 #if EMBEDDED
     push(GETC());
 #endif
+*/
 }
 
-void
-c_qterminal() {
+#pragma weak c_qterminal
+
+void c_qterminal() {
+    /*
 #if UNIX
     uabort("?terminal for Unix not yet implemented");
 #endif
@@ -1254,6 +1259,7 @@ c_qterminal() {
     #warning "EMBEDDED"
     uabort("?terminal for EMBEDDED not yet implemented");
 #endif
+*/
 }
 
 void
@@ -3119,9 +3125,8 @@ void string(void)
     c_count();
 }
 
-void c_dump(void)
-{
-    char *hex="0123456789abcdef";
+void c_dump(void) {
+    char *hex=(char *)"0123456789abcdef";
     char *ptr;
     char buffer[17];
     char opBuffer[128];
@@ -3136,7 +3141,6 @@ void c_dump(void)
     int offset=0;
 
     count=pop();
-//    ptr=(void *)pop();
     ptr=(char *)pop();
 
     printf("\r\n");

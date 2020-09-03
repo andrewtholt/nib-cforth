@@ -171,7 +171,7 @@ void create_user(char *name, CELL offset, CELL init);
 void create_codeword(char *name, CODE_FIELD func, BYTE flags);
 void create_vocab(char *name);
 void create_kernel(void);
-void uabort(char *mess);
+void uabort(const char *mess);
 void error(void);
 void user(CELL offset);
 CELL *puser(CELL offset);

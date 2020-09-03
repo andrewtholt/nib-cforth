@@ -149,7 +149,7 @@ error(void)
 }
 
 void
-uabort(char *mess)
+uabort(const char *mess)
 {
 	c_rpstor();
 	c_spstor();

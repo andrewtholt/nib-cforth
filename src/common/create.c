@@ -158,7 +158,7 @@ void create_kernel(void)
 	create_codeword("cfa", c_cfa, 0);
 	create_codeword("allot", c_allot, 0);
 	create_codeword("abort", c_abort, 0);
-	create_codeword("?terminal", c_qterminal, 0);
+	create_codeword("?key", c_qterminal, 0);
 	create_codeword("?dup", c_qdup, 0);
 	create_codeword(">", c_greater, 0);
 	create_codeword("=", c_equal, 0);
