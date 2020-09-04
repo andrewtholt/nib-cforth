@@ -1,12 +1,9 @@
 # DB=../../smallDatabase/db.o
-CFLAGS=-g -m32 -DLINUX -w
+CFLAGS=-g -m32 -w -Wl,--no-as-needed # -DLINUX 
 ARCHIVE=$(HOME)/Archive
 ARCHIVE_FILE=$(ARCHIVE)/cforth.tar
 FLAG=BackUp.txt
 CC=gcc
-# CC=arm-angstrom-linux-gnueabi-gcc
-# LIBS=c-client.a -lsocket -lnsl -lgen
-# TOPDIR=$(HOME)/Source/Forth/nib-cforth
 #
 TOPDIR=../..
 COMMON=$(TOPDIR)/src/common
@@ -15,14 +12,20 @@ INC=-I$(COMMON)
 LIBS=-ldl
 VPATH=../src
 
-cforth:	forth.o create.o words.o consio.o Makefile # access_db.o
+cforth:	forth.o create.o words.o consio.o fileio.o memory.o Makefile
 	$(CC) $(CFLAGS) -o cforth \
-    forth.o create.o words.o consio.o # $(DB) $(LIBS) #  access_db.o
+    forth.o create.o words.o consio.o fileio.o memory.o
 
 # cforth:	forth.o create.o words.o access_db.o Makefile $(DB)
 #	$(CC) $(CFLAGS) forth.o create.o words.o $(DB) \
 #	access_db.o $(LIBS) \
 #	-o cforth
+
+memory.o:	$(LINUX)/memory.c $(LINUX)/memory.h 
+	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) $(LINUX)/memory.c -o memory.o
+
+fileio.o:	$(LINUX)/fileio.c $(LINUX)/fileio.h 
+	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) $(LINUX)/fileio.c -o fileio.o
 
 consio.o:	$(LINUX)/consio.c $(LINUX)/consio.h 
 	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) $(LINUX)/consio.c -o consio.o

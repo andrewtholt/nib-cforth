@@ -1,3 +1,4 @@
 *.o
 cforth
 *.swp
+cscope.out

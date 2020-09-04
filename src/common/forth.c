@@ -48,6 +48,14 @@ char            s[100];
 static char     buffer[255];
 */
 
+#pragma weak extend_file
+void extend_file() {
+}
+
+#pragma weak extend_memory
+void extend_memory() {
+}
+
 /*
  * -------------------------------------------------------------------------
  * Headerless code bodies.
@@ -204,9 +212,7 @@ create_header(char *name, CODE_FIELD code, BYTE flags)
 	dp = (BYTE *) xx;
 }
 
-void
-create_codeword(char *name, CODE_FIELD code, BYTE flags)
-{
+void create_codeword(char *name, CODE_FIELD code, BYTE flags) {
 	create_header(name, code, flags);
 }
 
@@ -313,9 +319,10 @@ outer_quit(char *fname)
 			if (strlen(fname) > 0)
 				c_string_getf(fname);
 
-			init++;
+//			init++;
 		}
 #endif
+        init=1;
 
 		c_interpret();
 	}
@@ -396,6 +403,8 @@ main(int argc, char **argv)
 	init();
 	init_for_build();
 	create_kernel();
+    extend_file();
+    extend_memory();
 
 #if UNIX
 	SET_RAW;

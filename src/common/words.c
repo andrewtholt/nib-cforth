@@ -48,9 +48,9 @@ union REGS      regs;       /* for BIOS call */
 #define FILE_DEPTH 10
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
-extern char *prompt;
 
-/* ... ATH Other globals */
+// ... ATH Other globals
+extern char *prompt;
 int             verbose = 1;
 int selector=0;
 
@@ -954,9 +954,7 @@ c_latest()
     c_at();
 }
 
-void
-c_key()
-{
+void c_key() {
     (*(CODE_FIELD) * (CELL *) * puser(TKEY)) ();
 }
 
@@ -1221,6 +1219,7 @@ void c_aemit() {
 #pragma weak c_akey
 
 void c_akey() {
+    printf("Not defined.\n");
 /*
 #if UNIX
     push(getchar());
@@ -2740,7 +2739,6 @@ c_endall()
     while (depth >= 0)
         c_endf();
 }
-
 void
 c_afkey()
 {
@@ -2861,23 +2859,22 @@ c_parse()
     c_1plus();
 }
 
-#ifdef LINUX
-void
-c_getf()
-{
+#if 0
+void c_getf() {
     char           *name;
     if (depth >= FILE_DEPTH - 1)
         uabort("file include too deep");
     c_parse();
     name = (char *) pop();
     ifp[depth + 1] = fopen(name, "r");  /* same mode for all ! */
-    if (ifp[depth + 1] == NULL)
-    {
+
+    if (ifp[depth + 1] == NULL) {
         printf("can't open %s", name);
         uabort("file open error");
     }
-    if (depth < 0)
+    if (depth < 0) {
         *puser(TKEY) = (CELL) & cf_afkey;
+    }
     depth++;
 }
 
