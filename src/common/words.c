@@ -3020,7 +3020,7 @@ void c_cpu()
         cpu = CPU_X86;
     } else if ( (strcasecmp(buf.machine, "Power Macintosh") == 0) || (strcasecmp(buf.machine, "ppc") == 0) ) {
         cpu = CPU_PPC;
-    } else if ((strcasecmp(buf.machine, "armv5tel") == 0) || (strcasecmp(buf.machine, "armv6") == 0) ) {
+    } else if ((strcasecmp(buf.machine, "armv5tel") == 0) || (strcasecmp(buf.machine, "armv6l") == 0) ) {
         cpu = CPU_ARM;
     } else if (strcasecmp(buf.machine, "m68knommu") == 0)
     {
