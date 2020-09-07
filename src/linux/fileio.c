@@ -4,6 +4,10 @@
 #include <errno.h>
 #include "forth.h"
 
+#define FILE_DEPTH 10
+FILE           *ifp[FILE_DEPTH];
+int             depth = -1;
+
 typedef enum fam {
     RO=0,
     RW,
@@ -164,6 +168,18 @@ void readFile() {
     push(errno);
 }
 
+void readLine() {
+    FILE *fid = pop();
+    int len = pop();
+    char *ptr = (char *)pop();
+
+    int res = fgets(ptr,len, fid);
+
+    push(strlen(res));  // len
+    push(-1);
+    push(errno);
+}
+
 void closeFile() {
     FILE *fp=pop();
 
@@ -177,14 +193,54 @@ int depth=-1;
 */
 
 void includeFile() {
-#if 0
-    if (depth >= FILE_DEPTH - 1) 
+}
+ 
+void c_endf() {
+    if (depth < 0)
+        return;
+    fclose(ifp[depth]);
+
+    if (depth == 0) {                             
+        *puser(TKEY) = (CELL) & cf_akey;
+    }
+    depth--;
+}
+
+void c_endall() {
+    while (depth >= 0)
+        c_endf();
+}
+
+void c_afkey() {
+    extern int      verbose;
+
+    char            ch;
+    if (depth < 0)
+        uabort("no file open");
+    ch = getc(ifp[depth]);
+
+    if (ch == EOF) {
+        if (verbose)
+            printf("end of file");
+        c_endf();
+        push('\r');
+        return;
+    }
+
+    if (ch == '\n')
+        ch = '\r';
+
+    push(ch);
+}
+
+
+void c_getf() {
+    char           *name;
+
+    if (depth >= FILE_DEPTH - 1)
         uabort("file include too deep");
-
-//    c_parse();
-    int len=pop();
-    char *name = (char *) pop();
-
+    c_parse();
+    name = (char *) pop();
     ifp[depth + 1] = fopen(name, "r");  /* same mode for all ! */
 
     if (ifp[depth + 1] == NULL) {
@@ -195,9 +251,87 @@ void includeFile() {
         *puser(TKEY) = (CELL) & cf_afkey;
     }
     depth++;
-#endif
 }
 
+void c_string_getf(char *name) {
+
+    int len;
+    
+    if (depth >= FILE_DEPTH - 1)
+        uabort("file include too deep");
+    
+    ifp[depth + 1] = fopen(name, "r");  /* same mode for all ! */
+
+    if (ifp[depth + 1] == NULL) {
+        printf("can't open %s", name);
+        uabort("file open error");
+    }
+
+    if (depth < 0)
+        *puser(TKEY) = (CELL) & cf_afkey;
+    depth++;
+}
+// 
+// Stack : ud fileid -- ior
+//
+// Reposition the file identified by fileid to ud.
+// ior is the implementation-defined I/O result code.
+// An ambiguous condition exists if the file is positioned outside the file boundaries.
+// At the conclusion of the operation, FILE-POSITION returns the value ud.
+//
+void repositionFile() {
+    FILE *fid = pop();
+    int pos = pop();
+
+    (void)fseek(fid,(long)pos, SEEK_SET);
+
+    push(errno);
+}
+// 
+// Stack : fileid -- ud ior 
+//
+// ud is the current file position for the file identified by fileid.
+// ior is the implementation-defined I/O result code.
+// ud is undefined if ior is non-zero.
+//
+void filePosition() {
+    FILE *fid = pop();
+
+    push((CELL) ftell(fid));
+
+    push(errno);
+}
+// 
+// Stack : fileid -- ud ior 
+//
+// ud is the size, in characters, of the file identified by fileid.
+// ior is the implementation-defined I/O result code.
+// This operation does not affect the value returned by FILE-POSITION.
+// ud is undefined if ior is non-zero.
+// 
+void fileSize() {
+    FILE *fid = pop();
+
+    struct stat st;
+
+    int fd = fileno(fid);
+    fstat(fd, &st);
+
+    CELL sz = (CELL)st.st_size;
+
+    push(sz);
+    push(errno);
+
+}
+
+void deleteFile() {
+    int len = pop();
+    char *fname = (char *)pop();
+
+    int ior = unlink( fname );
+
+    push(ior);
+}
 
 void extend_file() {
     create_codeword("tst",c_tst,0);
@@ -210,7 +344,12 @@ void extend_file() {
     create_codeword("create-file",createFile,0);
     create_codeword("write-file",writeFile,0);
     create_codeword("read-file",readFile,0);
+    create_codeword("read-line",readLine,0);
     create_codeword("flush-file",flushFile,0);
     create_codeword("include-file",includeFile,0);
-
+    create_codeword("include",c_getf,0);
+    create_codeword("reposition-file",repositionFile,0);
+    create_codeword("file-position",filePosition,0);
+    create_codeword("file-size",fileSize,0);
+    create_codeword("delete-file",deleteFile,0);
 }

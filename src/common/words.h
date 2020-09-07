@@ -54,6 +54,7 @@ void c_servent(void);
 
 void c_enclose(void);
 void c_dup(void);
+void c_nip(void);
 void c_drop(void);
 void c_dnegate(void);
 void c_digit(void);

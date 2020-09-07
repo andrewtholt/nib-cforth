@@ -2,3 +2,4 @@
 cforth
 *.swp
 cscope.out
+.gdb_history

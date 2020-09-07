@@ -14,12 +14,15 @@ VPATH=../src
 
 cforth:	forth.o create.o words.o consio.o fileio.o memory.o Makefile
 	$(CC) $(CFLAGS) -o cforth \
-    forth.o create.o words.o consio.o fileio.o memory.o
+    forth.o create.o words.o consio.o fileio.o memory.o 
 
 # cforth:	forth.o create.o words.o access_db.o Makefile $(DB)
 #	$(CC) $(CFLAGS) forth.o create.o words.o $(DB) \
 #	access_db.o $(LIBS) \
 #	-o cforth
+
+extendFromFile.o:	extendFromFile.c
+	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) extendFromFile.c -o extendFromFile.o
 
 memory.o:	$(LINUX)/memory.c $(LINUX)/memory.h 
 	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) $(LINUX)/memory.c -o memory.o

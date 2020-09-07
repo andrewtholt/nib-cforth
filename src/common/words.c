@@ -45,9 +45,11 @@ union REGS      regs;       /* for BIOS call */
 #define TOP_BIT ((UCELL)1 << (CELL_SIZE*8 - 1))
 
 /* file-handling globals */
+#if 0
 #define FILE_DEPTH 10
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
+#endif
 
 // ... ATH Other globals
 extern char *prompt;
@@ -478,6 +480,11 @@ c_enclose()
         push((CELL) (c2 - addr));
         push((CELL) (c2 - addr + 1));
     }
+}
+
+void c_nip() {
+    c_swap();
+    c_drop();
 }
 
 void
@@ -2098,7 +2105,7 @@ void
 c_do()
 {
     c_qcomp();
-    push((CELL) & cf_ado);
+    push((CELL) &cf_ado);
     c_comma();
     c_here();
     push(3);
@@ -2719,7 +2726,7 @@ c_align_ptr(void)
 {
     push((pop() + ALIGN) & ~ALIGN);
 }
-
+#if 0
 void
 c_endf()
 {
@@ -2739,6 +2746,7 @@ c_endall()
     while (depth >= 0)
         c_endf();
 }
+
 void
 c_afkey()
 {
@@ -2764,6 +2772,7 @@ c_afkey()
 #endif
     push(ch);
 }
+#endif
 
 void
 c_afemit()

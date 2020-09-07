@@ -56,6 +56,10 @@ void extend_file() {
 void extend_memory() {
 }
 
+#pragma weak extend_from_file
+void extend_from_file() {
+}
+
 /*
  * -------------------------------------------------------------------------
  * Headerless code bodies.
@@ -406,6 +410,7 @@ main(int argc, char **argv)
     extend_file();
     extend_memory();
 
+    extend_from_file();
 #if UNIX
 	SET_RAW;
 #endif

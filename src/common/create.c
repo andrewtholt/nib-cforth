@@ -91,6 +91,8 @@ void create_kernel(void)
 
 	create_codeword("enclose", c_enclose, 0);
 	create_codeword("dup", c_dup, 0);
+	create_codeword("nip", c_nip, 0);
+
 	create_codeword("drop", c_drop, 0);
 	create_codeword("dnegate", c_dnegate, 0);
 	create_codeword("digit", c_digit, 0);
@@ -298,7 +300,7 @@ void create_kernel(void)
 	create_codeword("dlclose",c_dlclose,0);
 #endif
 
-/*	create_codeword("s\"",string,IMMED); */
+//	create_codeword("s\"",string,IMMED);
 	create_codeword("s\"",c_sdotq,IMMED);
 	create_codeword("dump",c_dump,0);
 #ifdef DB
