@@ -60,6 +60,7 @@ void create_kernel(void)
 	create_codeword("swap", c_swap, 0);
 	create_codeword("sp@", c_spat, 0);
 	create_codeword("sp!", c_spstor, 0);
+	create_codeword("clear", c_spstor, 0);
 	create_codeword("s->d", c_stod, 0);
 	create_codeword("rp@", c_rpat, 0);
 	create_codeword("rp!", c_rpstor, 0);

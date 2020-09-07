@@ -125,6 +125,7 @@ void writeFile() {
     int res = fwrite(ptr,1, len, fid);
 
     push(res);
+    push(errno);
 }
 // 
 // Stack: fileid -- ior 
@@ -177,6 +178,20 @@ void readLine() {
 
     push(strlen(res));  // len
     push(-1);
+    push(errno);
+}
+
+void writeLine() {
+    FILE *fid = pop();
+    int len = pop();
+    char *ptr = (char *)pop();
+
+    char eol = '\n';
+
+    int res = fwrite(ptr,1, len, fid);
+    res = fwrite(&eol,1, 1, fid);
+
+    push(res);
     push(errno);
 }
 
@@ -342,9 +357,11 @@ void extend_file() {
     create_codeword("open-file",openFile,0);
     create_codeword("close-file",closeFile,0);
     create_codeword("create-file",createFile,0);
-    create_codeword("write-file",writeFile,0);
     create_codeword("read-file",readFile,0);
+    create_codeword("write-file",writeFile,0);
+
     create_codeword("read-line",readLine,0);
+    create_codeword("write-line",writeLine,0);
     create_codeword("flush-file",flushFile,0);
     create_codeword("include-file",includeFile,0);
     create_codeword("include",c_getf,0);

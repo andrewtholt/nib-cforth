@@ -2,7 +2,7 @@
 variable fp
 variable ptr
 
-: file-tst
+: file-test
     20 allocate abort" Failed to allocate memory" ptr !
     s" test.txt" r/w open-file abort" Failed to open file"
     fp !
@@ -13,5 +13,5 @@ variable ptr
     ptr @ swap dump
 ;
 
-file-tst
+file-test
 read-test
