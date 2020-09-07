@@ -410,7 +410,8 @@ main(int argc, char **argv)
     extend_file();
     extend_memory();
 
-    extend_from_file();
+    extend_misc();
+
 #if UNIX
 	SET_RAW;
 #endif

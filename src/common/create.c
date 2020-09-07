@@ -293,8 +293,8 @@ void create_kernel(void)
 	create_codeword("verbose", c_verbose,0);
 	create_codeword("c\"",countedString,0);
 
-	create_codeword("cpu",c_cpu,0);
-	create_codeword("os",c_os,0);
+//	create_codeword("cpu",c_cpu,0);
+//	create_codeword("os",c_os,0);
 	create_codeword("banner",c_banner,0);
 #ifdef DLIB
 	create_codeword("dlopen",c_dlopen,0);

@@ -12,14 +12,18 @@ INC=-I$(COMMON)
 LIBS=-ldl
 VPATH=../src
 
-cforth:	forth.o create.o words.o consio.o fileio.o memory.o Makefile
+cforth:	forth.o create.o words.o consio.o fileio.o memory.o misc.o Makefile
 	$(CC) $(CFLAGS) -o cforth \
-    forth.o create.o words.o consio.o fileio.o memory.o 
+    forth.o create.o words.o consio.o fileio.o memory.o misc.o
 
 # cforth:	forth.o create.o words.o access_db.o Makefile $(DB)
 #	$(CC) $(CFLAGS) forth.o create.o words.o $(DB) \
 #	access_db.o $(LIBS) \
 #	-o cforth
+
+misc.o:	$(LINUX)/misc.c $(LINUX)/misc.h 
+	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) $(LINUX)/misc.c -o misc.o
+
 
 extendFromFile.o:	extendFromFile.c
 	$(CC) -c $(CFLAGS) $(INC) $(CFLAGS) extendFromFile.c -o extendFromFile.o
