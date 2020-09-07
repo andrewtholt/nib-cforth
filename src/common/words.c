@@ -45,11 +45,10 @@ union REGS      regs;       /* for BIOS call */
 #define TOP_BIT ((UCELL)1 << (CELL_SIZE*8 - 1))
 
 /* file-handling globals */
-#if 0
+
 #define FILE_DEPTH 10
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
-#endif
 
 // ... ATH Other globals
 extern char *prompt;

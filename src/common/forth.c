@@ -160,9 +160,9 @@ error(void)
 	longjmp(environment, 6);
 }
 
-void
-uabort(const char *mess)
-{
+extern void c_endall();
+
+void uabort(const char *mess) {
 	c_rpstor();
 	c_spstor();
 	c_lbrak();

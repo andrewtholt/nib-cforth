@@ -262,8 +262,8 @@ void create_kernel(void)
 	create_codeword("u.", c_udot, 0);
 	create_codeword(".", c_dot, 0);
 	create_codeword("?", c_quest, 0);
-	create_codeword("endf", c_endf, 0);
-	create_codeword("end-all", c_endall, 0);
+//	create_codeword("endf", c_endf, 0);
+//	create_codeword("end-all", c_endall, 0);
 	create_codeword("<fkey>", c_afkey, 0);
 	create_codeword("<femit>", c_afemit, 0);
 	create_codeword("debug", c_debug, 0);

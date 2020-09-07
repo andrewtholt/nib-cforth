@@ -222,7 +222,7 @@ void c_udot(void);
 void c_dot(void);
 void c_quest(void);
 void c_endf(void);
-void c_endall(void);
+extern void c_endall(void);
 void c_afkey(void);
 void c_afemit(void);
 void c_debug(void);

@@ -4,9 +4,14 @@
 #include <errno.h>
 #include "forth.h"
 
-#define FILE_DEPTH 10
+/*
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
+*/
+
+#define FILE_DEPTH 10
+extern int depth;
+extern FILE *ifp[FILE_DEPTH];
 
 typedef enum fam {
     RO=0,
@@ -209,7 +214,7 @@ int depth=-1;
 
 void includeFile() {
 }
- 
+/* 
 void c_endf() {
     if (depth < 0)
         return;
@@ -220,12 +225,15 @@ void c_endf() {
     }
     depth--;
 }
+*/
 
+/*
 void c_endall() {
     while (depth >= 0)
         c_endf();
 }
-
+*/
+/*
 void c_afkey() {
     extern int      verbose;
 
@@ -247,7 +255,7 @@ void c_afkey() {
 
     push(ch);
 }
-
+*/
 
 void c_getf() {
     char           *name;
@@ -369,4 +377,8 @@ void extend_file() {
     create_codeword("file-position",filePosition,0);
     create_codeword("file-size",fileSize,0);
     create_codeword("delete-file",deleteFile,0);
+
+//    create_codeword("endf", c_endf, 0);
+//    create_codeword("end-all", c_endall, 0);
+
 }
