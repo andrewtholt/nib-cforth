@@ -14,6 +14,7 @@ void c_akey() {
 void c_qterminal() {
     uabort((const char *)"?terminal for Unix/Linux not yet implemented");
 }
+
 void c_afkey() {
     extern int      verbose;
 

@@ -24,21 +24,12 @@
 #include <stdlib.h>
 // #include <sys/utsname.h>
 #include <string.h>
-#include <dlfcn.h>
+// #include <dlfcn.h>
 
 #include "words.h"
 #include "forth.h"
 #include "cpu.h"
 #include "os.h"
-
-#if DOS
-#include <dos.h>
-#define READ_KEYB_SUBFUNC 0x00
-#define STAT_KEYB_SUBFUNC 0x01
-#define READ_KEYB_INT 0x16
-#define Z_FLAG 0x0040
-union REGS      regs;       /* for BIOS call */
-#endif
 
 #define HALF_MASK ((UCELL)(~0) >> CELL_SIZE*4)
 #define HALF_SHIFT (CELL_SIZE*4)

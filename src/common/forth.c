@@ -56,6 +56,10 @@ void extend_file() {
 void extend_memory() {
 }
 
+#pragma weak extend_misc
+void extend_misc() {
+}
+
 #pragma weak extend_from_file
 void extend_from_file() {
 }
