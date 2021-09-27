@@ -280,10 +280,10 @@ void create_kernel(void)
 	create_codeword("getf", c_getf, 0);
 
 	create_codeword("include", c_getf, 0);
-#endif
-#endif
 	create_codeword("save", c_save, 0);
 	create_codeword("load", c_load, 0);
+#endif
+#endif
 	create_codeword("jsr", c_jsr, 0);
 	create_codeword("id.", c_iddot, 0);
 	create_codeword("words", c_vlist, 0);

@@ -1,10 +1,10 @@
 # DB=../../smallDatabase/db.o
-CFLAGS=-g -m32 -DLINUX -DFILESYSTEM # -DDB
+CFLAGS=-g -DLINUX # -DDB
 ARCHIVE=$(HOME)/Archive
 ARCHIVE_FILE=$(ARCHIVE)/cforth.tar
 FLAG=BackUp.txt
 CC=gcc
-# CC=arm-angstrom-linux-gnueabi-gcc
+CC=arm-angstrom-linux-gnueabi-gcc
 # LIBS=c-client.a -lsocket -lnsl -lgen
 LIBS=-ldl
 
