@@ -1,9 +1,13 @@
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include "forth.h"
 
+#include "words.h"
 /*
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
@@ -60,7 +64,7 @@ void fileStatus() {
 // Otherwise, ior is the implementation-defined I/O result code and fileid is undefined.
 //
 void openFile() {
-    fam_t access = pop();
+    fam_t access = (fam_t)pop();
     int len = pop();
     char *fname = (char *)pop();
 
@@ -77,7 +81,7 @@ void openFile() {
         push(-1);   // fileid
         push(errno);
     } else {
-        push(fp);
+        push((CELL)fp);
         push(0);
     }
     errno=0;
@@ -94,7 +98,7 @@ void openFile() {
 // Otherwise, ior is the implementation-defined I/O result code and fileid is undefined.
 //
 void createFile() {
-    fam_t access = pop();
+    fam_t access = (fam_t)pop();
     int len = pop();
     char *fname = (char *)pop();
 
@@ -107,7 +111,7 @@ void createFile() {
     } else {
         close(fd);
 
-        push(fname);
+        push((CELL)fname);
         push(len);
         push(access);
         openFile();
@@ -123,7 +127,7 @@ void createFile() {
 // or equal to the value returned by FILE-POSITION.
 //
 void writeFile() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
     int len = pop();
     char *ptr = (char *)pop();
 
@@ -142,7 +146,7 @@ void writeFile() {
 // Otherwise, it is an implementation-defined I/O result code.
 //
 void flushFile() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
 
     push( fflush(fid));
 }
@@ -165,7 +169,7 @@ void flushFile() {
 // last character read.
 //
 void readFile() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
     int len = pop();
     char *ptr = (char *)pop();
 
@@ -175,19 +179,19 @@ void readFile() {
 }
 
 void readLine() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
     int len = pop();
     char *ptr = (char *)pop();
 
-    int res = fgets(ptr,len, fid);
+    char *res = fgets(ptr,len, fid);
 
-    push(strlen(res));  // len
+    push(strlen(ptr));  // len
     push(-1);
     push(errno);
 }
 
 void writeLine() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
     int len = pop();
     char *ptr = (char *)pop();
 
@@ -201,7 +205,7 @@ void writeLine() {
 }
 
 void closeFile() {
-    FILE *fp=pop();
+    FILE *fp = (FILE *)pop();
 
     push( fclose(fp));
 }
@@ -303,7 +307,7 @@ void c_string_getf(char *name) {
 // At the conclusion of the operation, FILE-POSITION returns the value ud.
 //
 void repositionFile() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
     int pos = pop();
 
     (void)fseek(fid,(long)pos, SEEK_SET);
@@ -318,7 +322,7 @@ void repositionFile() {
 // ud is undefined if ior is non-zero.
 //
 void filePosition() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
 
     push((CELL) ftell(fid));
 
@@ -333,7 +337,7 @@ void filePosition() {
 // ud is undefined if ior is non-zero.
 // 
 void fileSize() {
-    FILE *fid = pop();
+    FILE *fid = (FILE *)pop();
 
     struct stat st;
 

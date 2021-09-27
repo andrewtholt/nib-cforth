@@ -323,7 +323,7 @@ Note: <BUILDS has been renamed to CREATE.
 ?STREAM		n  --
 	If n is not zero, abort with "Input stream exhausted".
 
-?KEY	--  d
+?TERMINAL	--  d
 	Action depends on platform. On DOS systems, this word does a BIOS
 	call to check keyboard status, returning true (d!=0) if a character
 	is waiting, false (d==0) otherwise. Any waiting character is read

@@ -1,5 +1,6 @@
 #include <sys/utsname.h>
-
+#include <strings.h>
+#include "forth.h"
 #include "cpu.h"
 #include "os.h"
 

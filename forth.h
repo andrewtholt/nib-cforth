@@ -146,7 +146,7 @@ extern CODE_FIELD cf_aemit, cf_akey, cf_afkey, cf_afemit,
 	cf_adotq, cf_lit, cf_branch, cf_zbranch, cf_exit;
 
 #define SCRATCH_SIZE 4 /* this must be a power of 2 e.g. 2,4,8,16,... */
-extern char scratchString[SCRATCH_SIZE][255];
+char scratchString[SCRATCH_SIZE][255];
 
 
 /* -------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void create_user(char *name, CELL offset, CELL init);
 void create_codeword(char *name, CODE_FIELD func, BYTE flags);
 void create_vocab(char *name);
 void create_kernel(void);
-void uabort(const char *mess);
+void uabort(char *mess);
 void error(void);
 void user(CELL offset);
 CELL *puser(CELL offset);

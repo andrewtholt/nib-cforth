@@ -60,7 +60,6 @@ void create_kernel(void)
 	create_codeword("swap", c_swap, 0);
 	create_codeword("sp@", c_spat, 0);
 	create_codeword("sp!", c_spstor, 0);
-	create_codeword("clear", c_spstor, 0);
 	create_codeword("s->d", c_stod, 0);
 	create_codeword("rp@", c_rpat, 0);
 	create_codeword("rp!", c_rpstor, 0);
@@ -92,8 +91,6 @@ void create_kernel(void)
 
 	create_codeword("enclose", c_enclose, 0);
 	create_codeword("dup", c_dup, 0);
-	create_codeword("nip", c_nip, 0);
-
 	create_codeword("drop", c_drop, 0);
 	create_codeword("dnegate", c_dnegate, 0);
 	create_codeword("digit", c_digit, 0);
@@ -161,7 +158,7 @@ void create_kernel(void)
 	create_codeword("cfa", c_cfa, 0);
 	create_codeword("allot", c_allot, 0);
 	create_codeword("abort", c_abort, 0);
-	create_codeword("?key", c_qterminal, 0);
+	create_codeword("?terminal", c_qterminal, 0);
 	create_codeword("?dup", c_qdup, 0);
 	create_codeword(">", c_greater, 0);
 	create_codeword("=", c_equal, 0);
@@ -262,15 +259,17 @@ void create_kernel(void)
 	create_codeword("u.", c_udot, 0);
 	create_codeword(".", c_dot, 0);
 	create_codeword("?", c_quest, 0);
-//	create_codeword("endf", c_endf, 0);
-//	create_codeword("end-all", c_endall, 0);
+	create_codeword("endf", c_endf, 0);
+	create_codeword("end-all", c_endall, 0);
 	create_codeword("<fkey>", c_afkey, 0);
 	create_codeword("<femit>", c_afemit, 0);
 	create_codeword("debug", c_debug, 0);
 	create_codeword("align-ptr", c_align_ptr, 0);
 	create_codeword("", c_x, IMMED);	/* null word */
 
+	create_codeword("parse", c_parse, 0);
 #ifdef LINUX
+#ifdef FILESYSTEM
 	create_codeword("fopenr", c_fopenr, 0);
 	create_codeword("fopenw", c_fopenw, 0);
 	create_codeword("fopena", c_fopena, 0);
@@ -278,10 +277,10 @@ void create_kernel(void)
 	create_codeword("fread", c_fread, 0);
 	create_codeword("fwrite", c_fwrite, 0);
 
-	create_codeword("parse", c_parse, 0);
 	create_codeword("getf", c_getf, 0);
 
 	create_codeword("include", c_getf, 0);
+#endif
 #endif
 	create_codeword("save", c_save, 0);
 	create_codeword("load", c_load, 0);
@@ -293,15 +292,15 @@ void create_kernel(void)
 	create_codeword("verbose", c_verbose,0);
 	create_codeword("c\"",countedString,0);
 
-//	create_codeword("cpu",c_cpu,0);
-//	create_codeword("os",c_os,0);
+	create_codeword("cpu",c_cpu,0);
+	create_codeword("os",c_os,0);
 	create_codeword("banner",c_banner,0);
 #ifdef DLIB
 	create_codeword("dlopen",c_dlopen,0);
 	create_codeword("dlclose",c_dlclose,0);
 #endif
 
-//	create_codeword("s\"",string,IMMED);
+/*	create_codeword("s\"",string,IMMED); */
 	create_codeword("s\"",c_sdotq,IMMED);
 	create_codeword("dump",c_dump,0);
 #ifdef DB

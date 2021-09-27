@@ -22,32 +22,37 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include <sys/utsname.h>
+#include <sys/utsname.h>
 #include <string.h>
-// #include <dlfcn.h>
+#include <dlfcn.h>
 
 #include "words.h"
 #include "forth.h"
 #include "cpu.h"
 #include "os.h"
 
+#if DOS
+#include <dos.h>
+#define READ_KEYB_SUBFUNC 0x00
+#define STAT_KEYB_SUBFUNC 0x01
+#define READ_KEYB_INT 0x16
+#define Z_FLAG 0x0040
+union REGS      regs;       /* for BIOS call */
+#endif
+
 #define HALF_MASK ((UCELL)(~0) >> CELL_SIZE*4)
 #define HALF_SHIFT (CELL_SIZE*4)
 #define TOP_BIT ((UCELL)1 << (CELL_SIZE*8 - 1))
 
 /* file-handling globals */
-
 #define FILE_DEPTH 10
 FILE           *ifp[FILE_DEPTH];
 int             depth = -1;
-
-// ... ATH Other globals
 extern char *prompt;
+
+/* ... ATH Other globals */
 int             verbose = 1;
 int selector=0;
-
-int c_prim_evaluate(char *cmd);
-
 void
 c_bye()
 {
@@ -391,7 +396,7 @@ int c_prim_evaluate(char *cmd)
 
     buffer[0] = len & 0x7f;
     strcpy(&buffer[1], cmd);
-    push((CELL)buffer);
+    push(buffer);
     user(CONTEXT);
     c_at();
     c_at();
@@ -406,7 +411,7 @@ int c_prim_evaluate(char *cmd)
     return(status);
 }
 
-void c_my_evaluate(char *ptr) {
+c_my_evaluate(char *ptr) {
 //   printf("%s\n",ptr);
     /*
     
@@ -470,11 +475,6 @@ c_enclose()
         push((CELL) (c2 - addr));
         push((CELL) (c2 - addr + 1));
     }
-}
-
-void c_nip() {
-    c_swap();
-    c_drop();
 }
 
 void
@@ -951,7 +951,9 @@ c_latest()
     c_at();
 }
 
-void c_key() {
+void
+c_key()
+{
     (*(CODE_FIELD) * (CELL *) * puser(TKEY)) ();
 }
 
@@ -1198,9 +1200,8 @@ c_qcsp()
         uabort("definition not finished");
 }
 
-#pragma weak c_aemit
 void c_aemit() {
-/*
+
     if (verbose) {
         // putchar((BYTE) pop());
         PUTC((BYTE) pop());
@@ -1211,13 +1212,11 @@ void c_aemit() {
     push(1);
     user(OUT);
     c_pstor();
-    */
 }
-#pragma weak c_akey
 
-void c_akey() {
-    printf("Not defined.\n");
-/*
+void
+c_akey()
+{
 #if UNIX
     push(getchar());
 #endif
@@ -1229,13 +1228,10 @@ void c_akey() {
 #if EMBEDDED
     push(GETC());
 #endif
-*/
 }
 
-#pragma weak c_qterminal
-
-void c_qterminal() {
-    /*
+void
+c_qterminal() {
 #if UNIX
     uabort("?terminal for Unix not yet implemented");
 #endif
@@ -1255,7 +1251,6 @@ void c_qterminal() {
     #warning "EMBEDDED"
     uabort("?terminal for EMBEDDED not yet implemented");
 #endif
-*/
 }
 
 void
@@ -2095,7 +2090,7 @@ void
 c_do()
 {
     c_qcomp();
-    push((CELL) &cf_ado);
+    push((CELL) & cf_ado);
     c_comma();
     c_here();
     push(3);
@@ -2716,7 +2711,7 @@ c_align_ptr(void)
 {
     push((pop() + ALIGN) & ~ALIGN);
 }
-#if 0
+
 void
 c_endf()
 {
@@ -2762,7 +2757,6 @@ c_afkey()
 #endif
     push(ch);
 }
-#endif
 
 void
 c_afemit()
@@ -2785,43 +2779,37 @@ c_debug()
     }
 }
 
-void c_x() {
+void
+c_x()
+{
     break_flag = TRUE;
 }
 
 /* -- handle (check for NULL!!) */
 #ifdef LINUX
-void
-c_fopenr()
-{
+#ifdef FILESYSTEM
+#warning "Filsystem set"
+void c_fopenr() {
     push((CELL) fopen((char *) pop(), FILE_READ_MODE));
 }
 
 /* -- handle (check for NULL!!) */
-void
-c_fopenw()
-{
+void c_fopenw() {
     push((CELL) fopen((char *) pop(), FILE_WRITE_MODE));
 }
 
 /* -- handle (check for NULL!!) */
-void
-c_fopena()
-{
+void c_fopena() {
     push((CELL) fopen((char *) pop(), FILE_APPEND_MODE));
 }
 
 /* handle -- 0/EOF */
-void
-c_fclose()
-{
+void c_fclose() {
     push((CELL) fclose((FILE *) pop()));
 }
 
 /* handle buff number-bytes -- actual-bytes */
-void
-c_fread()
-{
+void c_fread() {
     size_t          number;
     char           *buff;
     number = (size_t) pop();
@@ -2830,15 +2818,14 @@ c_fread()
 }
 
 /* handle buff number-bytes -- actual-bytes */
-void
-c_fwrite()
-{
+void c_fwrite() {
     size_t          number;
     char           *buff;
     number = (size_t) pop();
     buff = (char *) pop();
     push(fwrite(buff, 1, number, (FILE *) pop()));
 }
+#endif
 #endif
 
 /* -- pointer */
@@ -2858,22 +2845,23 @@ c_parse()
     c_1plus();
 }
 
-#if 0
-void c_getf() {
+#ifdef LINUX
+void
+c_getf()
+{
     char           *name;
     if (depth >= FILE_DEPTH - 1)
         uabort("file include too deep");
     c_parse();
     name = (char *) pop();
     ifp[depth + 1] = fopen(name, "r");  /* same mode for all ! */
-
-    if (ifp[depth + 1] == NULL) {
+    if (ifp[depth + 1] == NULL)
+    {
         printf("can't open %s", name);
         uabort("file open error");
     }
-    if (depth < 0) {
+    if (depth < 0)
         *puser(TKEY) = (CELL) & cf_afkey;
-    }
     depth++;
 }
 
@@ -3007,48 +2995,56 @@ c_quiet()
     verbose = 0;
 }
 
-#if 0
-void c_cpu() {
+void c_cpu()
+{
     struct utsname buf;
     int res;
     int cpu = CPU_UNKNOWN;
 
     res = uname(&buf);
-
-    if ((strcasecmp(buf.machine, "i686") == 0) || (strcasecmp(buf.machine, "i386") == 0) || (strcasecmp(buf.machine, "x86pc") == 0) ) {
+    if ((strcasecmp(buf.machine, "i686") == 0) || (strcasecmp(buf.machine, "i386") == 0) || (strcasecmp(buf.machine, "x86pc") == 0) )
+    {
         cpu = CPU_X86;
-    } else if ( (strcasecmp(buf.machine, "Power Macintosh") == 0) || (strcasecmp(buf.machine, "ppc") == 0) ) {
+    } else if ( (strcasecmp(buf.machine, "Power Macintosh") == 0) || (strcasecmp(buf.machine, "ppc") == 0) )
+    {
         cpu = CPU_PPC;
-    } else if ((strcasecmp(buf.machine, "armv5tel") == 0) || (strcasecmp(buf.machine, "armv6l") == 0) ) {
+    } else if (strcasecmp(buf.machine, "armv5tel") == 0)
+    {
         cpu = CPU_ARM;
-    } else if (strcasecmp(buf.machine, "m68knommu") == 0) {
+    } else if (strcasecmp(buf.machine, "m68knommu") == 0)
+    {
         cpu = CPU_COLDFIRE;
-    } else if (strcasecmp(buf.machine, "mips") == 0) {
+    } else if (strcasecmp(buf.machine, "mips") == 0)
+    {
         cpu = CPU_MIPS;
     }
     push(cpu);
 }
 
-void c_os() {
+void c_os()
+{
     struct utsname buf;
     int res;
     int os = OS_UNKNOWN;
 
     res = uname(&buf);
 
-    if (strcasecmp(buf.sysname, "linux") == 0) {
+    if (strcasecmp(buf.sysname, "linux") == 0)
+    {
         os = OS_LINUX;
-    } else if (strcasecmp(buf.sysname, "darwin") == 0) {
+    } else if (strcasecmp(buf.sysname, "darwin") == 0)
+    {
         os = OS_DARWIN;
-    } else if (strcasecmp(buf.sysname, "uClinux") == 0) {
+    } else if (strcasecmp(buf.sysname, "uClinux") == 0)
+    {
         os = OS_UCLINUX;
-    }  else if (strcasecmp(buf.sysname, "QNX") == 0) {
+    }  else if (strcasecmp(buf.sysname, "QNX") == 0)
+    {
         os = OS_QNX;
     }    
 
     push(os);
 }
-#endif
 
 #ifdef DLIB
 void c_dlopen(void)
@@ -3111,8 +3107,9 @@ void string(void)
     c_count();
 }
 
-void c_dump(void) {
-    char *hex=(char *)"0123456789abcdef";
+void c_dump(void)
+{
+    char *hex="0123456789abcdef";
     char *ptr;
     char buffer[17];
     char opBuffer[128];
@@ -3127,7 +3124,7 @@ void c_dump(void) {
     int offset=0;
 
     count=pop();
-    ptr=(char *)pop();
+    ptr=(void *)pop();
 
     printf("\r\n");
 
@@ -3138,7 +3135,7 @@ void c_dump(void) {
         memset((void *)opBuffer,32,128);
         len=16;
 
-        sprintf(opBuffer,"%08x: ",(unsigned int) ptr+offset);
+        sprintf(opBuffer,"%08x: ",ptr+offset);
         for(i=0;i<16;i++)
         {
             buffer[i]=(char )*(ptr+offset+i);

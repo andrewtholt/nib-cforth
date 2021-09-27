@@ -48,13 +48,13 @@ void c_i(void);
 void c_exit(void);
 void c_execute(void);
 void c_evaluate(void);
+int c_prim_evaluate(char *cmd);
 /*
 void c_servent(void);
 */
 
 void c_enclose(void);
 void c_dup(void);
-void c_nip(void);
 void c_drop(void);
 void c_dnegate(void);
 void c_digit(void);
@@ -222,7 +222,7 @@ void c_udot(void);
 void c_dot(void);
 void c_quest(void);
 void c_endf(void);
-extern void c_endall(void);
+void c_endall(void);
 void c_afkey(void);
 void c_afemit(void);
 void c_debug(void);

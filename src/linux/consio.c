@@ -2,6 +2,7 @@
 
 #include "consio.h"
 #include "forth.h"
+#include "words.h"
 
 
 extern int depth;
@@ -57,7 +58,7 @@ void c_endall() {
         c_endf();
 }
 
-void c_endf() {
+void c_endf(void) {
     if (depth < 0)
         return;
     fclose(ifp[depth]);

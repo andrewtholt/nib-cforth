@@ -3,10 +3,10 @@
 #include "forth.h"
 
 void allocate() {
-    int size = pop();
+    int size = (int)pop();
 
     void *ptr = calloc( size, sizeof(CELL));
-    push(ptr);
+    push((CELL)ptr);
 
     if ( ptr == NULL) {
         push(errno);
@@ -18,14 +18,14 @@ void allocate() {
 
 void resize() {
     int size = pop();
-    void *ptr = pop();
+    void *ptr = (void *)pop();
 
-    push( realloc(ptr, size));
+    push( (CELL)realloc(ptr, size));
 }
 
 
 void memFree() {
-    void *ptr = pop();
+    void *ptr = (void *)pop();
 
     free( ptr );
 

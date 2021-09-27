@@ -23,8 +23,6 @@
 #include "forth.h"
 #include "words.h"
 
-char scratchString[SCRATCH_SIZE][255];
-
 extern char    *optarg;
 char           *prompt;
 
@@ -47,26 +45,6 @@ char            s[100];
 /*
 static char     buffer[255];
 */
-
-// #pragma weak extend_file
-void __attribute__ ((weak)) extend_file(void);
-
-void extend_file() {
-}
-
-// #pragma weak extend_memory
-void __attribute__ ((weak)) extend_memory(void);
-void extend_memory() {
-}
-
-//#pragma weak extend_misc
-void __attribute__ ((weak)) extend_misc(void);
-void extend_misc() {
-}
-
-#pragma weak extend_from_file
-void extend_from_file() {
-}
 
 /*
  * -------------------------------------------------------------------------
@@ -168,9 +146,9 @@ error(void)
 	longjmp(environment, 6);
 }
 
-extern void c_endall();
-
-void uabort(const char *mess) {
+void
+uabort(char *mess)
+{
 	c_rpstor();
 	c_spstor();
 	c_lbrak();
@@ -224,7 +202,9 @@ create_header(char *name, CODE_FIELD code, BYTE flags)
 	dp = (BYTE *) xx;
 }
 
-void create_codeword(char *name, CODE_FIELD code, BYTE flags) {
+void
+create_codeword(char *name, CODE_FIELD code, BYTE flags)
+{
 	create_header(name, code, flags);
 }
 
@@ -331,10 +311,9 @@ outer_quit(char *fname)
 			if (strlen(fname) > 0)
 				c_string_getf(fname);
 
-//			init++;
+			init++;
 		}
 #endif
-        init=1;
 
 		c_interpret();
 	}
@@ -362,7 +341,8 @@ main(int argc, char **argv)
 	char            fname[255];
 
 	prompt = (char *) malloc(32);
-	fname[0] = '\0';;
+	fname[0] = 0;
+//	fname[0] = (char) NULL;
 
 	while ((ch = getopt(argc, argv, "vh?af:q")) != -1) {
 		switch (ch) {
@@ -415,10 +395,6 @@ main(int argc, char **argv)
 	init();
 	init_for_build();
 	create_kernel();
-    extend_file();
-    extend_memory();
-
-    extend_misc();
 
 #if UNIX
 	SET_RAW;
