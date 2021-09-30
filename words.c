@@ -2793,7 +2793,7 @@ void c_fopenr() {
     FILE *fp;
 
     int len = pop();
-    char *fname = pop();
+    char *fname = (char *)pop();
 
     fp = fopen((char *) fname, FILE_READ_MODE);
 
@@ -2806,7 +2806,7 @@ void c_fopenw() {
     FILE *fp;
 
     int len = pop();
-    char *fname = pop();
+    char *fname = (char *)pop();
 
     fp = fopen((char *) fname, FILE_WRITE_MODE);
 
@@ -2819,7 +2819,7 @@ void c_fopena() {
     FILE *fp;
 
     int len = pop();
-    char *fname = pop();
+    char *fname = (char *)pop();
 
     fp = fopen((char *) fname, FILE_APPEND_MODE);
 
