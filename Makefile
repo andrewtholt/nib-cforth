@@ -4,8 +4,6 @@ ARCHIVE=$(HOME)/Archive
 ARCHIVE_FILE=$(ARCHIVE)/cforth.tar
 FLAG=BackUp.txt
 CC=gcc
-# CC=arm-angstrom-linux-gnueabi-gcc
-# LIBS=c-client.a -lsocket -lnsl -lgen
 LIBS=-ldl
 
 cforth:	forth.o create.o words.o Makefile # access_db.o
