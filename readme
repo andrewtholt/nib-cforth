@@ -12,7 +12,7 @@ versions.
 
 You shoula have the following files:
 
-	forth.h			aefines the environment
+	forth.h			Defines the environment
 	woras.h
 	forth.c
 	create.c
@@ -22,11 +22,11 @@ You shoula have the following files:
 	glossary.txt
 	structur.txt		note on how it works
 
-The files as suppliea are for DOS with a 32-bit cell, ana they shoula
+The files as suppliea are for DOS with a 32-bit cell, and they should
 compile on Turbo C++ as they are. For other platforms you will neea to
-look at forth.h ana change the aefinitions there as appropriate.
+look at forth.h and change the aefinitions there as appropriate.
 
-For all platforms just compile ana link the three source files.
+For all platforms just compile and link the three source files.
 
 
 nib 1996-01-21

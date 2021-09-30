@@ -2790,17 +2790,41 @@ c_x()
 #ifdef FILESYSTEM
 #warning "Filsystem set"
 void c_fopenr() {
-    push((CELL) fopen((char *) pop(), FILE_READ_MODE));
+    FILE *fp;
+
+    int len = pop();
+    char *fname = pop();
+
+    fp = fopen((char *) fname, FILE_READ_MODE);
+
+    push((CELL) fp);
+//    push((CELL) fopen((char *) pop(), FILE_READ_MODE));
 }
 
 /* -- handle (check for NULL!!) */
 void c_fopenw() {
-    push((CELL) fopen((char *) pop(), FILE_WRITE_MODE));
+    FILE *fp;
+
+    int len = pop();
+    char *fname = pop();
+
+    fp = fopen((char *) fname, FILE_WRITE_MODE);
+
+    push((CELL) fp);
+//    push((CELL) fopen((char *) pop(), FILE_WRITE_MODE));
 }
 
 /* -- handle (check for NULL!!) */
 void c_fopena() {
-    push((CELL) fopen((char *) pop(), FILE_APPEND_MODE));
+    FILE *fp;
+
+    int len = pop();
+    char *fname = pop();
+
+    fp = fopen((char *) fname, FILE_APPEND_MODE);
+
+    push((CELL) fp);
+//    push((CELL) fopen((char *) pop(), FILE_APPEND_MODE));
 }
 
 /* handle -- 0/EOF */

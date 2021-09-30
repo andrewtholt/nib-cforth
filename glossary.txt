@@ -1110,4 +1110,7 @@ EVALUATE  cmd len -- flag
 SERVENT   cmd len --
     The string, given by cmd and len is the name of a on OS command that 
     sends forth "phrases" to standard out.  The phrases are then evaluated.
-    
+
+FOPENR   name len -- fp
+    Open the file with the given name and return the file ponter.
+
