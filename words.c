@@ -411,6 +411,7 @@ int c_prim_evaluate(char *cmd)
     return(status);
 }
 
+#if 0
 c_my_evaluate(char *ptr) {
 //   printf("%s\n",ptr);
     /*
@@ -421,6 +422,7 @@ c_my_evaluate(char *ptr) {
 */
     c_interpret();
 }
+#endif
 
 /*
 void c_servent()
@@ -822,9 +824,7 @@ c_pstor()
     *(CELL *) x += pop();
 }
 
-void
-c_plus()
-{
+void c_plus() {
     push(pop() + pop());
 }
 
