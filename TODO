@@ -1,8 +1,8 @@
 
 30 Sep 2021
 
-1) Add fopen with access mode as a parameter.
-2) Add fseek
-3) Add append-cr (in lib) append cr to string
+[X] 1) Add fopen with access mode as a parameter.
+[ ] 2) Add fseek
+[ ] 3) Add append-cr (in lib) append cr to string
 
 
