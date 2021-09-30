@@ -23,10 +23,10 @@ Notes:
 nib 1992-03-20
 update nib 1993-07-03, 1996-01-21
 */
-
+#include <stdint.h>
 #define INTEL16 0	/* 16-bit data, all near pointers, small model  */
-#define INTEL32 1	/* 32-bit data, all far pointers, large model     */
-#define CLEAN32 0	/* proper 32-bit data, 32-bit address             */
+#define INTEL32 0	/* 32-bit data, all far pointers, large model     */
+#define CLEAN32 1	/* proper 32-bit data, 32-bit address             */
 #define DOS 0
 #define UNIX 1
 
@@ -37,10 +37,11 @@ update nib 1993-07-03, 1996-01-21
 #endif
 
 #if INTEL16
-	typedef int CELL;
-	typedef unsigned int UCELL;
-	typedef unsigned int WORD;
-	typedef unsigned char BYTE;
+	typedef uint32_t CELL;
+	typedef uint32_t UCELL;
+	typedef uint32_t WORD;
+//	typedef unsigned char BYTE;
+	typedef uint8_t BYTE;
 	typedef void (*CODE_FIELD)(void);
 	#define ALIGN 0x1                   /* mask of bits to be zero */
 	#define CELL_SIZE 2                 /* bytes in the Forth single */
@@ -67,10 +68,10 @@ update nib 1993-07-03, 1996-01-21
 #endif
 
 #if CLEAN32
-	typedef int CELL;
-	typedef unsigned int UCELL;
-	typedef unsigned short WORD;
-	typedef unsigned char BYTE;
+	typedef int32_t CELL;
+	typedef uint32_t UCELL;
+	typedef uint16_t WORD;
+	typedef uint8_t BYTE;
 	typedef void (*CODE_FIELD)(void);
 	#define ALIGN 0x3                   /* mask of bits to be zero */
 	#define CELL_SIZE 4                 /* bytes in the Forth single */
