@@ -276,9 +276,7 @@ init_for_build(void)
  * then execute it. The only 'quit' available to the user sets flags to come
  * back into this one. Only way out of this loop is 'exit' done by 'bye'.
  */
-void
-outer_quit(char *fname)
-{
+void outer_quit(char *fname) {
 	extern int      verbose;
 	int             init = 0;
 	char           *ptr;
@@ -333,9 +331,7 @@ usage()
  * --------------------------------------------------------------------------
  * Main.
  */
-int
-main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	int             ch;
 	extern int      verbose;
 	char            fname[255];

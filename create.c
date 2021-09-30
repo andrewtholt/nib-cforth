@@ -270,6 +270,7 @@ void create_kernel(void)
 	create_codeword("parse", c_parse, 0);
 #ifdef LINUX
 #ifdef FILESYSTEM
+	create_codeword("fopen", c_fopen, 0);
 	create_codeword("fopenr", c_fopenr, 0);
 	create_codeword("fopenw", c_fopenw, 0);
 	create_codeword("fopena", c_fopena, 0);

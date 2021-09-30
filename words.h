@@ -231,6 +231,7 @@ void c_afemit(void);
 void c_align_ptr(void);
 
 #ifdef LINUX
+void c_fopen(void);
 void c_fopenr(void);
 void c_fopenw(void);
 void c_fopena(void);

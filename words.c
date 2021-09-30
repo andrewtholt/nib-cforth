@@ -2732,17 +2732,15 @@ c_endall()
         c_endf();
 }
 
-void
-c_afkey()
-{
+void c_afkey() {
     extern int      verbose;
 
-    char            ch;
+    int ch;
+
     if (depth < 0)
         uabort("no file open");
     ch = getc(ifp[depth]);
-    if (ch == EOF)
-    {
+    if (ch == EOF) {
         if (verbose)
             printf("end of file");
         c_endf();
@@ -2789,6 +2787,21 @@ c_x()
 #ifdef LINUX
 #ifdef FILESYSTEM
 #warning "Filsystem set"
+
+// name len mode len -- fp
+void c_fopen() {
+
+    int modeLen = pop();
+    char *mode = (char *)pop();
+
+    int nameLen = pop();
+    char *name = (char *) pop();;
+    
+    FILE *fp = fopen((char *) name, (char *)mode );
+
+    push((CELL) fp);
+}
+
 void c_fopenr() {
     FILE *fp;
 
